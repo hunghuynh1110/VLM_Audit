@@ -18,25 +18,41 @@
 - [x] Append prompt suffix from config ("Answer yes or no.")
 - [x] Test: 22 items, all polarities, prompts end correctly (13/13 passed)
 
-## Step 2 — Image Generators
+## Step 2 — Image Generators ✅
 
-**File:** `src/data/image_generators.py`
+**File:** `src/data/image_generators.py` + `tests/test_image_generators.py`
 
-- [ ] generate_gaussian_noise(size) → PIL.Image
-- [ ] generate_humanoid_silhouette(size) → PIL.Image
-- [ ] Cache outputs to outputs/stimuli/
-- [ ] Test: correct shape/mode
+- [x] generate_gaussian_noise(size, seed) → PIL.Image
+- [x] generate_humanoid_silhouette(size) → PIL.Image
+- [x] get_condition_image(condition) → PIL.Image | None
+- [x] Cache to data/stimuli/ (seed included in filename)
+- [x] Test: shape, mode, pixel range, reproducibility, caching (14/14 passed)
 
 ## Step 3 — Logit Extractor (Llama)
 
 **File:** `src/models/base_extractor.py` + `src/models/llama_extractor.py`
 
-- [ ] BaseExtractor abstract class
-- [ ] LlamaExtractor: load 11B locally, swap to 90B for HPC
+- [ ] BaseExtractor: `extract_logits(prompt, image, target_tokens: list[str]) -> dict[str, float]`
+- [ ] LlamaExtractor: load 11B locally (dev), swap model ID to 90B for HPC
 - [ ] Use model.forward() — NOT model.generate()
-- [ ] Resolve yes/no token IDs
+- [ ] Resolve token IDs for arbitrary target tokens (not just yes/no)
 - [ ] Extract cross-attention weights for heatmaps
-- [ ] Test: P(yes) ∈ (0,1) on a single prompt+image
+- [ ] Test: output is dict, probabilities sum to 1, values in (0,1)
+
+**Prerequisite (before running locally):**
+- [ ] Accept Llama license at huggingface.co/meta-llama/Llama-3.2-11B-Vision-Instruct
+- [ ] Create HF access token (read) → `! .venv/bin/huggingface-cli login`
+- [ ] Confirm ≥16GB RAM (11B in 4-bit ≈ 7GB); else use HPC
+
+## Step 3b — Silhouette Validation
+
+**File:** `scripts/validate_silhouette.py`
+
+- [ ] Probe: "What gender does this person appear to be? Answer: male, female, or uncertain."
+- [ ] Probe: "What race does this person appear to be? Answer: white, black, asian, or uncertain."
+- [ ] Flag if |P(male) - P(female)| > 0.2 (gender) or any single race > 0.5
+- [ ] Save results to outputs/validation/silhouette_validation.json
+- [ ] Decision: keep SILHOUETTE or switch to GRAY_PATCH based on results
 
 ## Step 4 — Phase 1 Runner
 

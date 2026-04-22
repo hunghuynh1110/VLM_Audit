@@ -25,6 +25,7 @@ paths:
   sigir_data: data/sigir2018
   images_historical: data/sigir2018/images
   images_contemporary: data/images/contemporary
+  stimuli: data/stimuli
   outputs: outputs
 
 models:
