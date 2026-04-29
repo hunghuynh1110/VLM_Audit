@@ -179,7 +179,8 @@ class LlamaExtractor(BaseExtractor):
         # We want the logits at the last input position (next-token prediction)
         last_logits = outputs.logits[0, -1, :]  # shape: (vocab_size,)
 
-        self._last_attention = outputs.cross_attentions
+        # Llama-3.2-Vision surfaces attention via `attentions`; no separate cross_attentions field
+        self._last_attention = getattr(outputs, "cross_attentions", None) or getattr(outputs, "attentions", None)
 
         return {
             tok: last_logits[tid].item()

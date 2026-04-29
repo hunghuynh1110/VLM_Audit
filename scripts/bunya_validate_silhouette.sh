@@ -19,4 +19,7 @@ mkdir -p logs
 
 source .venv/bin/activate
 
+export HF_HOME=/QRISdata/Q9468/huggingface_cache
+export HF_TOKEN=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
+
 python scripts/validate_silhouette.py
