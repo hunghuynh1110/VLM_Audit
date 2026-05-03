@@ -44,7 +44,7 @@ class PromptStructure(Enum):
 class ModalityCondition(Enum):
     TEXT_ONLY  = "text_only"   # no image; uses "a person"
     NOISE      = "noise"       # gaussian noise image; uses "this person"
-    SILHOUETTE = "silhouette"  # gray humanoid image; uses "this person"
+    GRAY_PATCH = "gray_patch"  # uniform gray image; uses "this person"
 
 
 # ---------------------------------------------------------------------------
