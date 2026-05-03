@@ -5,6 +5,12 @@ __pycache__/
 .venv/
 outputs/
 data/images/
+data/stimuli/
 *.pt
 *.bin
 *.safetensors
+
+logs/
+.claude/
+*.egg-info/
+syncFiles
