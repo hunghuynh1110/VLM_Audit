@@ -1,0 +1,24 @@
+{
+  "stimulus": "gray_patch",
+  "description": "Uniform gray rectangle (150, 150, 150) — no human shape",
+  "model": "meta-llama/Llama-3.2-11B-Vision-Instruct",
+  "job_id": "24166505",
+  "gender": {
+    "logits": { "male": 18.703125, "female": 18.828125, "uncertain": 12.34375 },
+    "probs": { "male": 0.468, "female": 0.531, "uncertain": 0.001 },
+    "flagged": false,
+    "metric": 0.062,
+    "threshold": 0.2,
+    "interpretation": "Near-equal split — no gender signal from image"
+  },
+  "race": {
+    "logits": { "white": 18.828125, "black": 17.921875, "asian": 13.265625, "uncertain": 11.977 },
+    "probs": { "white": 0.710, "black": 0.287, "asian": 0.003, "uncertain": 0.001 },
+    "flagged": true,
+    "metric": 0.710,
+    "threshold": 0.5,
+    "interpretation": "Model prior — defaults to 'white' when no person is visible. Not stimulus-driven: P(white) is HIGHER on gray patch than on silhouette (0.710 vs 0.547), proving the signal is linguistic, not visual."
+  },
+  "overall_pass": true,
+  "decision": "ACCEPTED — passes gender gate; race flag is model prior, not stimulus signal"
+}

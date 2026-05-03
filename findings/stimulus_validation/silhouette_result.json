@@ -1,0 +1,20 @@
+{
+  "stimulus": "humanoid_silhouette",
+  "description": "Gray featureless human silhouette (head, torso, arms, legs geometry)",
+  "model": "meta-llama/Llama-3.2-11B-Vision-Instruct",
+  "job_id": "24165293",
+  "gender": {
+    "flagged": true,
+    "metric": 0.853,
+    "threshold": 0.2,
+    "interpretation": "Model reads strong male signal from humanoid body geometry"
+  },
+  "race": {
+    "flagged": true,
+    "metric": 0.547,
+    "threshold": 0.5,
+    "interpretation": "Model infers race from silhouette shape"
+  },
+  "overall_pass": false,
+  "decision": "REJECTED — replaced with gray patch"
+}
