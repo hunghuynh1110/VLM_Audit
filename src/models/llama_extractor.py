@@ -12,7 +12,7 @@ HPC:          meta-llama/Llama-3.2-90B-Vision-Instruct  (full / 8-bit)
 from __future__ import annotations
 
 import warnings
-from typing import Optional
+from typing import Literal, Optional
 
 import torch
 from PIL import Image
@@ -20,6 +20,8 @@ from transformers import MllamaForConditionalGeneration, AutoProcessor
 
 from src.config import CFG
 from src.models.base_extractor import BaseExtractor
+
+Quantization = Literal["none", "4bit", "8bit"]
 
 _MODEL_IDS = {
     "llama_dev": CFG["models"]["llama_dev"],
@@ -32,31 +34,41 @@ class LlamaExtractor(BaseExtractor):
     Wraps MllamaForConditionalGeneration for single-pass logit extraction.
 
     Args:
-        variant:   "llama_dev" (11B, local) or "llama" (90B, HPC).
-        device:    "auto" lets accelerate shard across available hardware.
-        load_in_4bit: quantise to 4-bit (requires bitsandbytes; recommended
-                      for local 11B run on a Mac with ≥16 GB unified memory).
+        variant:        "llama_dev" (11B, local) or "llama" (90B, HPC).
+        device:         "auto" lets accelerate shard across available hardware.
+        quantization:   "none" (fp16), "4bit", or "8bit".  Quantised modes
+                        require bitsandbytes.  4-bit ≈ 0.5 byte/param,
+                        8-bit ≈ 1 byte/param — pick to fit your VRAM.
     """
 
     def __init__(
         self,
         variant: str = "llama_dev",
         device: str = "auto",
-        load_in_4bit: bool = False,
+        quantization: Quantization = "none",
     ) -> None:
         if variant not in _MODEL_IDS:
             raise ValueError(f"Unknown variant '{variant}'. Choose from {list(_MODEL_IDS)}")
+        if quantization not in ("none", "4bit", "8bit"):
+            raise ValueError(f"Unknown quantization '{quantization}'. Choose from none, 4bit, 8bit.")
 
         model_id = _MODEL_IDS[variant]
+        self.model_id = model_id
+        self.quantization = quantization
 
         self.processor = AutoProcessor.from_pretrained(model_id)
 
         quant_kwargs: dict = {}
-        if load_in_4bit:
+        if quantization == "4bit":
             from transformers import BitsAndBytesConfig
             quant_kwargs["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_compute_dtype=torch.float16,
+            )
+        elif quantization == "8bit":
+            from transformers import BitsAndBytesConfig
+            quant_kwargs["quantization_config"] = BitsAndBytesConfig(
+                load_in_8bit=True,
             )
 
         self.model = MllamaForConditionalGeneration.from_pretrained(
@@ -169,18 +181,12 @@ class LlamaExtractor(BaseExtractor):
         inputs = self._build_inputs(prompt, image)
 
         with torch.no_grad():
-            outputs = self.model(
-                **inputs,
-                output_attentions=True,
-                return_dict=True,
-            )
+            outputs = self.model(**inputs, return_dict=True)
 
         # outputs.logits: (batch=1, seq_len, vocab_size)
         # We want the logits at the last input position (next-token prediction)
         last_logits = outputs.logits[0, -1, :]  # shape: (vocab_size,)
-
-        # Llama-3.2-Vision surfaces attention via `attentions`; no separate cross_attentions field
-        self._last_attention = getattr(outputs, "cross_attentions", None) or getattr(outputs, "attentions", None)
+        self._last_attention = None  # populated only by get_attention_weights()
 
         return {
             tok: last_logits[tid].item()
