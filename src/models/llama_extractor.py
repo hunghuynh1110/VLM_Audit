@@ -70,7 +70,7 @@ class LlamaExtractor(BaseExtractor):
             from transformers import BitsAndBytesConfig
             quant_kwargs["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True,
-                bnb_4bit_compute_dtype=torch.float16,
+                bnb_4bit_compute_dtype=torch.bfloat16,
             )
         elif quantization == "8bit":
             from transformers import BitsAndBytesConfig
@@ -81,7 +81,7 @@ class LlamaExtractor(BaseExtractor):
         print(f"[LlamaExtractor] loading weights ({quantization}) ...")
         self.model = MllamaForConditionalGeneration.from_pretrained(
             model_id,
-            torch_dtype=torch.float16,
+            torch_dtype=torch.bfloat16,
             device_map=device,
             **quant_kwargs,
         )
