@@ -1,8 +1,8 @@
 torch>=2.2.0
 # HPC install: pip install torch --index-url https://download.pytorch.org/whl/cu121
-transformers>=4.45.0
-accelerate>=0.30.0
-bitsandbytes>=0.43.0
+transformers>=4.45.0,<5.0
+accelerate>=0.30.0,<1.1
+bitsandbytes>=0.43.0,<0.45
 qwen-vl-utils>=0.0.8
 openai>=1.30.0
 Pillow>=10.0.0
