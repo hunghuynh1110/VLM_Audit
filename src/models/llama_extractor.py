@@ -11,6 +11,7 @@ HPC:          meta-llama/Llama-3.2-90B-Vision-Instruct  (full / 8-bit)
 
 from __future__ import annotations
 
+import sys
 import warnings
 from typing import Literal, Optional
 
@@ -56,7 +57,13 @@ class LlamaExtractor(BaseExtractor):
         self.model_id = model_id
         self.quantization = quantization
 
+        import logging
+        import transformers
+        transformers.logging.set_verbosity_info()
+        transformers.logging.add_handler(logging.StreamHandler(sys.stdout))
+        print(f"[LlamaExtractor] loading processor for {model_id} ...")
         self.processor = AutoProcessor.from_pretrained(model_id)
+        print(f"[LlamaExtractor] processor loaded")
 
         quant_kwargs: dict = {}
         if quantization == "4bit":
@@ -71,6 +78,7 @@ class LlamaExtractor(BaseExtractor):
                 load_in_8bit=True,
             )
 
+        print(f"[LlamaExtractor] loading weights ({quantization}) ...")
         self.model = MllamaForConditionalGeneration.from_pretrained(
             model_id,
             torch_dtype=torch.float16,
@@ -78,6 +86,7 @@ class LlamaExtractor(BaseExtractor):
             **quant_kwargs,
         )
         self.model.eval()
+        print(f"[LlamaExtractor] weights loaded, device_map={self.model.hf_device_map if hasattr(self.model, 'hf_device_map') else device}")
 
         # Cache token IDs to avoid repeated tokeniser lookups
         self._token_id_cache: dict[str, int] = {}

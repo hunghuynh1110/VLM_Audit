@@ -27,6 +27,7 @@ Schema (per row):
 from __future__ import annotations
 
 import json
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Optional
@@ -108,7 +109,8 @@ def run_phase1(extractor: BaseExtractor, cfg: RunConfig) -> Path:
     image_cache: dict[ModalityCondition, object] = {}
 
     with open(checkpoint_path, "a") as fout:
-        for record in tqdm(pending, desc=f"phase1[{cfg.model_name}]", unit="prompt"):
+        for record in tqdm(pending, desc=f"phase1[{cfg.model_name}]", unit="prompt",
+                           file=sys.stdout, disable=False, mininterval=60, miniters=1):
             if record.condition not in image_cache:
                 image_cache[record.condition] = get_condition_image(record.condition)
             image = image_cache[record.condition]

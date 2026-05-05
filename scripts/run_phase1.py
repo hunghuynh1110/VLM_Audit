@@ -43,10 +43,19 @@ def main() -> None:
 
     output_dir = args.output_dir or default_output_dir()
 
+    import torch
     print(f"[run_phase1] model={args.model} device={args.device} "
           f"quantization={args.quantization} limit={args.limit}")
     print(f"[run_phase1] output_dir={output_dir}")
+    print(f"[run_phase1] torch={torch.__version__} "
+          f"cuda_available={torch.cuda.is_available()} "
+          f"gpu_count={torch.cuda.device_count()}")
+    for i in range(torch.cuda.device_count()):
+        props = torch.cuda.get_device_properties(i)
+        print(f"[run_phase1] gpu[{i}] {props.name} {props.total_memory // 1024**3} GB")
+    print("[run_phase1] loading model ...")
     extractor = _build_extractor(args.model, args.device, args.quantization)
+    print("[run_phase1] model loaded")
 
     cfg = RunConfig(model_name=args.model, output_dir=output_dir, limit=args.limit)
     parquet_path = run_phase1(extractor, cfg)
