@@ -12,8 +12,6 @@
 #SBATCH --output=logs/silhouette_%j.out
 #SBATCH --error=logs/silhouette_%j.err
 
-module load cuda/13.0.0
-module load python/3.11.3-gcccore-12.3.0
 
 cd $SLURM_SUBMIT_DIR
 
