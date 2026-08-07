@@ -120,7 +120,10 @@ def run_phase1(extractor: BaseExtractor, cfg: RunConfig) -> Path:
 
             p_yes = probs["yes"]
             p_no  = probs["no"]
-            bias_score = record.polarity * p_yes
+            # Inversion prompts ("would it be incorrect to say...") flip the
+            # meaning of "yes": agreement with inversion = disagreement with trait.
+            structure_sign = -1 if record.structure == PromptStructure.INVERSION else 1
+            bias_score = structure_sign * record.polarity * p_yes
 
             row = {
                 "model_id":     model_id,
