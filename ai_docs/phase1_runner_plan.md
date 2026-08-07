@@ -16,16 +16,16 @@ Stimulus validation is complete. The humanoid silhouette failed (gender gap 0.85
 
 ## Current status
 
-| Component | Status |
-|---|---|
-| ASI items (22 items, 330 prompts) | ✅ Done — `src/data/asi_items.py` |
-| Image generators (noise, gray_patch) | ✅ Done — `src/data/image_generators.py` |
-| BaseExtractor + LlamaExtractor | ✅ Done — `src/models/` |
-| Stimulus validation (gray patch) | ✅ Done — `findings/stimulus_validation/` |
-| Models downloaded on Bunya | ✅ Done — 11B, 90B, Qwen2-VL-72B |
-| Gate 2: 90B memory preflight | ❌ Not done |
-| Phase 1 runner | ❌ Not written |
-| Phase 1 results (Llama) | ❌ Not run |
+| Component                            | Status                                    |
+| ------------------------------------ | ----------------------------------------- |
+| ASI items (22 items, 330 prompts)    | ✅ Done — `src/data/asi_items.py`         |
+| Image generators (noise, gray_patch) | ✅ Done — `src/data/image_generators.py`  |
+| BaseExtractor + LlamaExtractor       | ✅ Done — `src/models/`                   |
+| Stimulus validation (gray patch)     | ✅ Done — `findings/stimulus_validation/` |
+| Models downloaded on Bunya           | ✅ Done — 11B, 90B, Qwen2-VL-72B          |
+| Gate 2: 90B memory preflight         | ❌ Not done                               |
+| Phase 1 runner                       | ❌ Not written                            |
+| Phase 1 results (Llama)              | ❌ Not run                                |
 
 ---
 
@@ -38,6 +38,7 @@ Stimulus validation is complete. The humanoid silhouette failed (gender gap 0.85
 Fallback if 2-GPU queue times on Bunya are unworkable: drop to 4-bit on 1× A100-80GB (~45 GB weights). Decide before submitting Gate 2.
 
 **Files to create:**
+
 - `scripts/preflight_90b.py` — load 90B in 8-bit, run one forward pass with gray patch + a known ASI prompt, print peak VRAM + elapsed time per inference
 - `scripts/bunya_preflight_90b.sh` — SLURM wrapper: `--gres=gpu:a100:2 --mem=200G --time=00:30:00`
 
@@ -69,15 +70,18 @@ Update `tests/test_base_extractor.py` if it asserts the old signature.
 Loop over `get_all_prompts()` (330 records), extract logits, save results.
 
 **Output schema (one row per inference):**
+
 ```
 model_id | quantization | item_id | subscale | polarity | structure | condition | prompt |
 logit_yes | logit_no | p_yes | p_no | bias_score
 ```
+
 where `bias_score = polarity × p_yes`. `subscale` and `polarity` are derivable from `item_id` but kept denormalised for analysis convenience. `model_id` (HF repo string), `quantization` (e.g. "8bit"), and a fixed `seed` column are stored per-row for full reproducibility in the paper.
 
 **Checkpoint/resume:** write each completed row to `outputs/phase1/{model}_checkpoint.jsonl` immediately after inference. On startup, skip already-completed rows (match on `model_id + item_id + structure + condition`). Convert to parquet at end.
 
 **Key functions to call (already built):**
+
 - `get_all_prompts()` → `src/data/asi_items.py:118`
 - `get_condition_image(condition)` → `src/data/image_generators.py:79`
 - `extractor.extract_logits(prompt, image, ["yes", "no"])` → `src/models/llama_extractor.py:156`
@@ -102,6 +106,7 @@ def breakdown_by_subscale(df) -> dict    # HS vs BS
 ### B3 — `scripts/run_phase1.py`
 
 CLI entry point:
+
 ```
 python scripts/run_phase1.py --model llama_dev --device auto --quantization 4bit --limit 5
 python scripts/run_phase1.py --model llama     --device auto --quantization 8bit
@@ -112,6 +117,7 @@ Args: `--model` (llama_dev | llama | qwen), `--device` (auto), `--quantization` 
 ### B4 — `scripts/bunya_run_phase1.sh`
 
 SLURM wrapper using GPU allocation confirmed by Gate 2. Template:
+
 ```bash
 #SBATCH --gres=gpu:a100:2
 #SBATCH --mem=200G
@@ -129,18 +135,18 @@ Pre-commit check: verify `.gitignore` covers `logs/`, `outputs/phase1/*.jsonl`, 
 
 ## File map
 
-| File | Action |
-|---|---|
-| `src/phase1/__init__.py` | Create (empty) |
-| `src/phase1/runner.py` | Create |
-| `src/phase1/metrics.py` | Create |
-| `scripts/run_phase1.py` | Create |
-| `scripts/preflight_90b.py` | Create |
-| `scripts/bunya_preflight_90b.sh` | Create |
-| `scripts/bunya_run_phase1.sh` | Create |
-| `src/models/llama_extractor.py` | **Edit** — replace `load_in_4bit` with `quantization` arg supporting 4bit/8bit |
-| `src/data/asi_items.py` | Done — no changes |
-| `src/data/image_generators.py` | Done — no changes |
+| File                             | Action                                                                         |
+| -------------------------------- | ------------------------------------------------------------------------------ |
+| `src/phase1/__init__.py`         | Create (empty)                                                                 |
+| `src/phase1/runner.py`           | Create                                                                         |
+| `src/phase1/metrics.py`          | Create                                                                         |
+| `scripts/run_phase1.py`          | Create                                                                         |
+| `scripts/preflight_90b.py`       | Create                                                                         |
+| `scripts/bunya_preflight_90b.sh` | Create                                                                         |
+| `scripts/bunya_run_phase1.sh`    | Create                                                                         |
+| `src/models/llama_extractor.py`  | **Edit** — replace `load_in_4bit` with `quantization` arg supporting 4bit/8bit |
+| `src/data/asi_items.py`          | Done — no changes                                                              |
+| `src/data/image_generators.py`   | Done — no changes                                                              |
 
 ---
 
