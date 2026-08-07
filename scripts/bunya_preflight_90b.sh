@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=200G
 #SBATCH --gres=gpu:h100:2
-#SBATCH --time=00:30:00
+#SBATCH --time=06:00:00
 #SBATCH --output=logs/preflight_90b_%j.out
 #SBATCH --error=logs/preflight_90b_%j.err
 
@@ -22,16 +22,22 @@ source .venv/bin/activate
 export HF_TOKEN=$(cat ~/.cache/huggingface/token)
 export HUGGING_FACE_HUB_TOKEN=$HF_TOKEN
 
-# Pre-copy 90B weights to scratch to avoid mmap-over-NFS hang (~90 GB, ~7 min at 200 MB/s)
+# Pre-copy 90B weights to scratch to avoid mmap-over-NFS hang.
+# Measured: 166 GB across 37 shards, ~12 min at 235 MB/s.
 SCRATCH=${TMPDIR:-/scratch/user/$USER}
 SCRATCH_HF=$SCRATCH/huggingface_cache
 SRC_MODEL=/QRISdata/Q9468/huggingface_cache/hub/models--meta-llama--Llama-3.2-90B-Vision-Instruct
 
 echo "[preflight] scratch=$SCRATCH_HF"
+echo "[preflight] free space on scratch target:"
+df -h "$SCRATCH"
+echo "[preflight] source size:"
+du -shL "$SRC_MODEL"
 echo "[preflight] copying llama-90b weights ..."
 mkdir -p "$SCRATCH_HF/hub"
-rsync -aL --info=progress2 "$SRC_MODEL" "$SCRATCH_HF/hub/"
+time rsync -aL --info=progress2 "$SRC_MODEL" "$SCRATCH_HF/hub/"
 echo "[preflight] copy done"
+df -h "$SCRATCH"
 
 export HF_HOME=$SCRATCH_HF
 export SAFETENSORS_FAST_GPU=1
