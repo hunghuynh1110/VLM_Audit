@@ -150,3 +150,83 @@ The model says "yes" 57–79% of the time across **every** structure — includi
 **Evidence:** pip install of torch (530 MB) fails with `OSError: [Errno 122] Disk quota exceeded` on login node.
 
 **Mitigation:** redirect with `TMPDIR=/QRISdata/Q9468/tmp PIP_CACHE_DIR=/QRISdata/Q9468/pip_cache` before any large pip install on Bunya. Persist in `~/.bashrc` if needed.
+
+---
+
+## 8. Surface-form artifact — corrected, and the HS/BS gap replicates
+
+**Evidence:** job `27104037` (330 rows, 11B, bf16, case-pooled) vs the archived
+lowercase-only run `24256941` (`outputs/phase1_lowercase_v1/`).
+
+The probe previously read only lowercase `yes`/`no`, which hold ~0.09% of the
+next-token distribution. Pooling `{yes,Yes,YES}` vs `{no,No,NO}` raises the
+measured share to **47% on average** — a ~500x increase in captured mass.
+
+| metric | lowercase-only | case-pooled |
+|---|---|---|
+| ASI_intrinsic (raw) | +0.1251 | **+0.0835** |
+| ASI_intrinsic (per-structure adj) | −0.040 | **−0.042** |
+| HS (adj) | +0.044 | **+0.033** |
+| BS (adj) | −0.125 | **−0.117** |
+| **HS − BS gap** | **0.169** | **0.151** |
+
+**The central finding survives.** The corrected overall ASI is essentially
+unchanged (−0.040 → −0.042) and the HS−BS gap moves only 0.169 → 0.151. It is
+also robust to filtering on measurement quality:
+
+| captured_mass ≥ | n | HS adj | BS adj | gap |
+|---|---|---|---|---|
+| 0.00 | 330 | +0.033 | −0.117 | 0.151 |
+| 0.10 | 284 | +0.029 | −0.115 | 0.144 |
+| 0.30 | 166 | +0.019 | −0.154 | 0.174 |
+| 0.50 | 113 | +0.084 | −0.182 | 0.266 |
+
+The gap never collapses and strengthens on the highest-quality rows.
+
+**Status:** Finding 4d CONFIRMED under corrected measurement.
+
+---
+
+## 9. Acquiescence was real but substantially overstated (revises 4c)
+
+Mean p_yes per structure, before and after the surface-form fix:
+
+| structure | lowercase-only | case-pooled |
+|---|---|---|
+| descriptive | 0.793 | 0.650 |
+| inversion | 0.788 | 0.628 |
+| attribution | 0.648 | 0.503 |
+| direct | 0.602 | 0.456 |
+| hypothetical | 0.567 | 0.400 |
+
+Overall mean p_yes falls from ~0.70 to **0.527**. Three of five structures now
+sit at or below 0.5. The claim "the model says yes to whatever it is shown" does
+not hold as stated — much of it was the lowercase tail, not the model.
+
+Acquiescence correction still matters (raw +0.0835 → adjusted −0.042), but
+Finding 4c must be reworded: a modest yes-lean, not a dominant one.
+
+---
+
+## 10. Visual input makes the model refuse the yes/no frame (new)
+
+`captured_mass` by modality condition (job 27104037):
+
+| condition | mean captured_mass | rows under 10% captured |
+|---|---|---|
+| text_only | **0.979** | 0.0% |
+| gray_patch | 0.237 | 12.7% |
+| noise | 0.204 | 29.1% |
+
+With no image the model answers yes/no cleanly 98% of the time. **Add any
+image — even a featureless gray patch — and ~80% of the probability mass moves
+elsewhere**, typically onto `'I'` (the model beginning "I cannot determine…").
+Gaussian noise provokes the most refusal.
+
+**Two implications.**
+1. This is algorithmic defensiveness measured directly, and it is triggered by
+   the *presence* of visual input rather than by image content. That is on-thesis
+   for RQ1 and is a result in its own right.
+2. p_yes is not comparable across conditions without care: in the vision
+   conditions it is conditioned on ~20% of the model's behaviour versus ~98% in
+   text-only. Cross-condition contrasts must report captured_mass alongside.
