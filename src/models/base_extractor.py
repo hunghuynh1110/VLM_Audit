@@ -46,6 +46,29 @@ class BaseExtractor(ABC):
             e.g. {"yes": 12.3, "no": 8.1}
         """
 
+    def extract_probs(
+        self,
+        prompt: str,
+        image: Optional[Image.Image],
+        target_tokens: list[str],
+    ) -> dict[str, float]:
+        """
+        Return each target token's probability under the FULL-vocabulary softmax.
+
+        Distinct from softmax_probs(extract_logits(...)), which renormalises over
+        the target tokens alone and therefore cannot tell you how much of the
+        model's distribution those tokens actually account for.
+
+        Needed because probability mass must be pooled ACROSS surface forms
+        ("yes"/"Yes"/"YES") before any ratio is taken, and because the pooled
+        total (captured_mass) is itself a validity statistic worth recording.
+
+        Subclasses that can access the full distribution should override this.
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} does not implement extract_probs()"
+        )
+
     @abstractmethod
     def get_attention_weights(
         self,

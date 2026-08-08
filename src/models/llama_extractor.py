@@ -220,6 +220,28 @@ class LlamaExtractor(BaseExtractor):
             for tok, tid in zip(target_tokens, token_ids)
         }
 
+    def extract_probs(
+        self,
+        prompt: str,
+        image: Optional[Image.Image],
+        target_tokens: list[str],
+    ) -> dict[str, float]:
+        """
+        Full-vocabulary softmax probability for each target token.
+
+        Unlike softmax_probs(extract_logits(...)), these probabilities are
+        comparable in absolute terms and can be summed across surface forms.
+        """
+        token_ids = [self._resolve_token_id(t) for t in target_tokens]
+        inputs = self._build_inputs(prompt, image)
+
+        with torch.no_grad():
+            outputs = self.model(**inputs, return_dict=True)
+
+        last_logits = outputs.logits[0, -1, :].float()
+        probs = torch.softmax(last_logits, dim=-1)
+        return {tok: probs[tid].item() for tok, tid in zip(target_tokens, token_ids)}
+
     def get_attention_weights(
         self,
         prompt: str,
