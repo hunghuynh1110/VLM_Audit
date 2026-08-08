@@ -29,9 +29,22 @@ __all__ = [
     "ScaleOrder",
     "Phase2Condition",
     "RATING_TOKENS",
+    "ASSISTANT_PREFIX",
     "build_scoring_prompt",
     "normalise_rating",
 ]
+
+# Prefilled into the MODEL's turn, not the user's.
+#
+# apply_chat_template closes the user turn and opens an empty assistant turn, so
+# a "Rating: " left at the end of the user message is not continued -- the model
+# starts a fresh reply and the next token is its opening word. Job 27105400 ran
+# that way and the digits 1-7 held 0.43% of the distribution. Prefilling the
+# assistant turn makes the digit genuinely the next token.
+#
+# Trailing space is required: Llama-3.2 tokenises " 1" as [220, 16], so only a
+# bare digit is a single token.
+ASSISTANT_PREFIX = "Rating: "
 
 # Verified single-token in the Llama-3.2 vocabulary (job 27087751):
 # "1"->16 ... "7"->22. The space-prefixed forms are NOT single tokens.
@@ -68,7 +81,7 @@ def build_scoring_prompt(query: str, order: ScaleOrder, condition: Phase2Conditi
 
     return (
         f"On a scale of 1 to 7, {anchors}, rate how objective {referent} appears "
-        f"for the query \"{query}\". Rating: "
+        f"for the query \"{query}\"."
     )
 
 

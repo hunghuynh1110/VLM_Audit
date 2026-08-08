@@ -13,6 +13,7 @@ from src.data.sigir_loader import QUERIES
 from src.models.base_extractor import BaseExtractor
 from src.phase2 import metrics
 from src.phase2.prompts import (
+    ASSISTANT_PREFIX,
     RATING_TOKENS,
     Phase2Condition,
     ScaleOrder,
@@ -24,10 +25,28 @@ from src.phase2.runner import Phase2Config, run_phase2
 
 # --- prompts ---------------------------------------------------------------
 
-def test_prompt_ends_with_trailing_space():
-    """Llama tokenises ' 1' as two tokens; the digit must be the next token."""
+def test_assistant_prefix_carries_the_rating_cue():
+    """
+    "Rating: " must sit in the MODEL's turn, not the user's. In the user turn the
+    template closes the turn after it, so the model starts a fresh reply and the
+    digit is never the next token (job 27105400: 0.43% captured mass).
+    """
     p = build_scoring_prompt("bossy person", ScaleOrder.ORIGINAL, Phase2Condition.VISION)
-    assert p.endswith("Rating: "), repr(p[-20:])
+    assert not p.rstrip().endswith("Rating:"), "rating cue must not end the user message"
+    assert ASSISTANT_PREFIX == "Rating: "
+    assert ASSISTANT_PREFIX.endswith(" "), "bare digit is single-token; ' 1' is not"
+
+
+def test_runner_passes_the_assistant_prefix(tmp_path):
+    seen = {}
+
+    class _Spy(_FakeExtractor):
+        def extract_probs(self, prompt, image, target_tokens, assistant_prefix=""):
+            seen["prefix"] = assistant_prefix
+            return super().extract_probs(prompt, image, target_tokens)
+
+    run_phase2(_Spy(), Phase2Config(model_name="spy", output_dir=tmp_path, limit=1))
+    assert seen["prefix"] == ASSISTANT_PREFIX
 
 
 def test_prompt_contains_query_and_scale():
@@ -77,7 +96,7 @@ class _FakeExtractor(BaseExtractor):
     def extract_logits(self, prompt, image, target_tokens):
         return {t: 0.0 for t in target_tokens}
 
-    def extract_probs(self, prompt, image, target_tokens):
+    def extract_probs(self, prompt, image, target_tokens, assistant_prefix=""):
         # All mass on one digit, scaled so captured_mass == self.mass.
         return {t: (self.mass if int(t) == self.peak else 0.0) for t in target_tokens}
 

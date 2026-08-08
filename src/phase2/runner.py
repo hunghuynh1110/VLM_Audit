@@ -44,6 +44,7 @@ from src.config import CFG
 from src.data.sigir_loader import QUERIES, get_image_paths
 from src.models.base_extractor import BaseExtractor
 from src.phase2.prompts import (
+    ASSISTANT_PREFIX,
     RATING_TOKENS,
     Phase2Condition,
     ScaleOrder,
@@ -147,7 +148,9 @@ def run_phase2(extractor: BaseExtractor, cfg: Phase2Config) -> Path:
                 image = None
 
             prompt = build_scoring_prompt(query, order, condition)
-            probs = extractor.extract_probs(prompt, image, RATING_TOKENS)
+            probs = extractor.extract_probs(
+                prompt, image, RATING_TOKENS, assistant_prefix=ASSISTANT_PREFIX
+            )
 
             captured_mass = sum(probs.values())
             if captured_mass > 0:

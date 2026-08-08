@@ -51,6 +51,7 @@ class BaseExtractor(ABC):
         prompt: str,
         image: Optional[Image.Image],
         target_tokens: list[str],
+        assistant_prefix: str = "",
     ) -> dict[str, float]:
         """
         Return each target token's probability under the FULL-vocabulary softmax.

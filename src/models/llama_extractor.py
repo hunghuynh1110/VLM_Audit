@@ -148,7 +148,10 @@ class LlamaExtractor(BaseExtractor):
         return tid
 
     def _build_inputs(
-        self, prompt: str, image: Optional[Image.Image]
+        self,
+        prompt: str,
+        image: Optional[Image.Image],
+        assistant_prefix: str = "",
     ) -> dict[str, torch.Tensor]:
         """
         Build the processor inputs expected by MllamaForConditionalGeneration.
@@ -178,6 +181,16 @@ class LlamaExtractor(BaseExtractor):
         text = self.processor.apply_chat_template(
             messages, add_generation_prompt=True
         )
+
+        # apply_chat_template closes the user turn and opens an empty assistant
+        # turn, so anything trailing the user message ("Rating: ") is NOT what
+        # the model continues -- it starts a fresh reply, and the next token is
+        # whatever a reply opens with. Appending the prefix here puts it inside
+        # the assistant turn, making the token we want genuinely next.
+        # Verified: without this, Phase 2's digits held 0.43% of the
+        # distribution (job 27105400).
+        if assistant_prefix:
+            text = text + assistant_prefix
 
         inputs = self.processor(
             text=text,
@@ -225,15 +238,20 @@ class LlamaExtractor(BaseExtractor):
         prompt: str,
         image: Optional[Image.Image],
         target_tokens: list[str],
+        assistant_prefix: str = "",
     ) -> dict[str, float]:
         """
         Full-vocabulary softmax probability for each target token.
 
         Unlike softmax_probs(extract_logits(...)), these probabilities are
         comparable in absolute terms and can be summed across surface forms.
+
+        assistant_prefix is inserted at the start of the model's own turn, so
+        the target tokens are genuinely the next token rather than the opening
+        word of a fresh reply.
         """
         token_ids = [self._resolve_token_id(t) for t in target_tokens]
-        inputs = self._build_inputs(prompt, image)
+        inputs = self._build_inputs(prompt, image, assistant_prefix)
 
         with torch.no_grad():
             outputs = self.model(**inputs, return_dict=True)
