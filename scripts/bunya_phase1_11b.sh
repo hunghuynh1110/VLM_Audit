@@ -13,6 +13,11 @@
 #SBATCH --error=logs/phase1_11b_%j.err
 
 
+# Fail loudly: without this a Python crash still exits 0 and SLURM reports
+# COMPLETED. That is how the 8-bit failures (27087751, 27086002) nearly passed
+# unnoticed.
+set -euo pipefail
+
 cd $SLURM_SUBMIT_DIR
 
 mkdir -p logs outputs/phase1
