@@ -13,7 +13,6 @@ Dataset notes:
   - Low/high-ASI split uses median of asi_score (≈ 2.82 on 0–5 scale).
 """
 
-import ast
 from pathlib import Path
 
 import numpy as np
@@ -99,14 +98,31 @@ def get_image_paths(
     data_dir: Path = _DATA_DIR,
     images_subdir: str = "images",
     queries: list[str] = QUERIES,
+    k: int | None = None,
+    verify: bool = True,
 ) -> dict[str, list[Path]]:
     """
     Return per-query image file paths from the extracted images.zip archive.
 
-    Prerequisite: images.zip must be extracted at data_dir/images/ before calling.
-    Paths are returned regardless of whether files exist — callers should verify.
+    Prerequisite: images.zip must be extracted at data_dir/images/, preserving
+    its numbered subdirectories (0/ .. 9/, one per query).
 
-    Returns {query: [Path, ...]} with up to k=9 unique images per query.
+    Format notes (verified against final_anonymised.csv, 281 participants):
+      - `{i}_imageurl` is a NEWLINE-SEPARATED string of 38 relative paths such
+        as "8/tmpyushlocq.jpg" — it is NOT a Python list literal, so parsing it
+        with ast.literal_eval silently yields one long blob.
+      - The path carries a directory prefix identifying the query; stripping it
+        to a bare filename loses that and points at a non-existent flat layout.
+      - Every participant saw the SAME ordering for a given query (exactly one
+        distinct ordering per query across all 281 rows), so the ranked list is
+        well defined and the first k entries are the displayed grid.
+
+    Args:
+        k:      keep only the first k images per query (PIPELINE_SPEC uses 9,
+                matching the SIGIR 3x3 grid). None keeps all 38.
+        verify: raise if any returned path does not exist on disk.
+
+    Returns {query: [Path, ...]} in the original ranked order.
     """
     df = load_raw(data_dir)
     images_dir = data_dir / images_subdir
@@ -123,15 +139,29 @@ def get_image_paths(
             raw = row.get(f"{i}_imageurl")
             if pd.isna(raw):
                 continue
-            try:
-                urls = ast.literal_eval(raw) if isinstance(raw, str) else raw
-            except (ValueError, SyntaxError):
-                urls = [raw]
-            for url in urls:
-                fname = Path(str(url)).name
-                if fname and fname not in seen[query]:
-                    seen[query].add(fname)
-                    query_images[query].append(images_dir / fname)
+            # Newline-separated relative paths, e.g. "8/tmpyushlocq.jpg".
+            rel_paths = [ln.strip() for ln in str(raw).splitlines() if ln.strip()]
+            for rel in rel_paths:
+                if rel not in seen[query]:
+                    seen[query].add(rel)
+                    query_images[query].append(images_dir / rel)
+
+    if k is not None:
+        query_images = {q: paths[:k] for q, paths in query_images.items()}
+
+    if verify:
+        missing = {q: [p for p in paths if not p.exists()]
+                   for q, paths in query_images.items()}
+        missing = {q: v for q, v in missing.items() if v}
+        if missing:
+            total = sum(len(v) for v in missing.values())
+            example = next(iter(missing.values()))[0]
+            raise FileNotFoundError(
+                f"{total} SIGIR image(s) missing, e.g. {example}. "
+                f"Extract images.zip into {images_dir} preserving its 0/..9/ "
+                "subdirectories:  unzip data/sigir2018/images.zip -d "
+                f"{images_dir}"
+            )
 
     return query_images
 
