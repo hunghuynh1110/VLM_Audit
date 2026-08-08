@@ -42,11 +42,20 @@ class LlamaExtractor(BaseExtractor):
                         8-bit ≈ 1 byte/param — pick to fit your VRAM.
     """
 
+    # Vision tower + projector + lm_head are excluded from quantisation by
+    # default. Two reasons:
+    #   1. bnb int8 crashes on Mllama's 4-D vision tensors (jobs 27087751,
+    #      27086002 -- bitsandbytes/backends/cuda/ops.py lines 145 and 34).
+    #   2. lm_head produces the logits we measure. Quantising it injects
+    #      quantisation noise directly into the dependent variable.
+    DEFAULT_SKIP_MODULES = ["vision_model", "multi_modal_projector", "lm_head"]
+
     def __init__(
         self,
         variant: str = "llama_dev",
         device: str = "auto",
         quantization: Quantization = "none",
+        skip_modules: Optional[list[str]] = None,
     ) -> None:
         if variant not in _MODEL_IDS:
             raise ValueError(f"Unknown variant '{variant}'. Choose from {list(_MODEL_IDS)}")
@@ -56,6 +65,10 @@ class LlamaExtractor(BaseExtractor):
         model_id = _MODEL_IDS[variant]
         self.model_id = model_id
         self.quantization = quantization
+        # Pass skip_modules=[] to deliberately quantise everything.
+        self.skip_modules = (
+            self.DEFAULT_SKIP_MODULES if skip_modules is None else skip_modules
+        )
 
         import logging
         import transformers
@@ -68,14 +81,19 @@ class LlamaExtractor(BaseExtractor):
         quant_kwargs: dict = {}
         if quantization == "4bit":
             from transformers import BitsAndBytesConfig
+            # llm_int8_skip_modules is misleadingly named: transformers maps it
+            # to modules_to_not_convert, which governs 4-bit as well as 8-bit.
             quant_kwargs["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_quant_type="nf4",
+                llm_int8_skip_modules=self.skip_modules,
             )
         elif quantization == "8bit":
             from transformers import BitsAndBytesConfig
             quant_kwargs["quantization_config"] = BitsAndBytesConfig(
                 load_in_8bit=True,
+                llm_int8_skip_modules=self.skip_modules,
             )
 
         print(f"[LlamaExtractor] loading weights ({quantization}) ...")
