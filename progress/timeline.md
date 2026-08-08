@@ -51,3 +51,20 @@ Chronological event log. Append to the bottom. Don't rewrite history.
   - Overall ASI raw +0.125 → corrected −0.040. Inversion outlier (−0.371) collapses to −0.012. Noise condition lands at zero after correction (stimulus design validated).
   - **Surviving signal:** HS subscale +0.044 vs BS subscale −0.125 (gap ≈ 0.17). Robust to all three correction variants. Likely RLHF: safety training catches obvious BS tropes but is weaker on hostile items.
   - Decision: proceed with **(a) acquiescence correction + (c) cross-model comparison**. Forced-choice redesign deferred.
+
+## 2026-08-07 — 08-08 (resumed after ~3 month pause)
+
+- Re-established Bunya access (DUO MFA via SSH control master). Verified 90B
+  (166 GB) and Qwen2-VL-72B (137 GB) weights intact; venv pins all still hold.
+- Gate 2 finally ran (job 24086002→`27086002`): **90B loads 8-bit in 154 s,
+  peak 85.25 GB on 2×H100**. Memory was never the blocker.
+- 8-bit crashed at the first forward pass — bitsandbytes int8 kernels reject
+  Mllama's 4-D vision tensors. Fixed by skipping `vision_model`,
+  `multi_modal_projector`, `lm_head` from quantisation.
+- **Measurement-validity sweep (job 27103565) found the probe reads the wrong
+  tokens**: `captured_mass` = 0.0877%; `'No'` is 457× likelier than `'no'`;
+  lowercase-pair p_yes overestimates case-pooled p_yes by ~0.17. Finding 4c
+  (acquiescence) is substantially a measurement artifact. See
+  [`audit_2026-08-08.md`](audit_2026-08-08.md).
+- Fixed 5 silent bugs (SIGIR image loader ×2, stale silhouette tests, Phase 2
+  prompt trailing space, missing `set -e`). Tests 22 → 47.
