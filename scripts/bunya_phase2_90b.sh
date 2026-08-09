@@ -44,19 +44,20 @@ p = get_image_paths(k=9, verify=True)
 print(f'[phase2_90b] SIGIR images OK: {len(p)} queries')
 "
 
-SCRATCH=${TMPDIR:-/scratch/user/$USER}
-SCRATCH_HF=$SCRATCH/huggingface_cache
-SRC_MODEL=/QRISdata/Q9468/huggingface_cache/hub/models--meta-llama--Llama-3.2-90B-Vision-Instruct
+# Weights are pre-staged on GPFS scratch by scripts/bunya_stage_90b.sh.
+MODEL_DIR=/scratch/user/$USER/models/Llama-3.2-90B-Vision-Instruct
+if [ ! -f "$MODEL_DIR/model.safetensors.index.json" ]; then
+    echo "[phase2_90b] FATAL: weights not staged at $MODEL_DIR" >&2
+    echo "[phase2_90b] run: sbatch scripts/bunya_stage_90b.sh" >&2
+    exit 1
+fi
+echo "[phase2_90b] weights=$MODEL_DIR"
 
-echo "[phase2_90b] staging 166 GB of weights ..."
-df -h "$SCRATCH"
-mkdir -p "$SCRATCH_HF/hub"
-time rsync -aL "$SRC_MODEL" "$SCRATCH_HF/hub/"
-
-export HF_HOME=$SCRATCH_HF
+export HF_HUB_OFFLINE=1
 export SAFETENSORS_FAST_GPU=1
 
-python -u scripts/run_phase2.py --model llama --quantization none
+python -u scripts/run_phase2.py --model llama --quantization none \
+    --weights-path "$MODEL_DIR"
 
 echo "[phase2_90b] peak VRAM per GPU:"
 nvidia-smi --query-gpu=index,memory.used --format=csv,noheader || true

@@ -46,24 +46,23 @@ echo "[phase1] node=$(hostname)"
 nvidia-smi --query-gpu=index,name,memory.total --format=csv,noheader
 echo "=============================================="
 
-# safetensors mmap() over NFS-mounted QRISdata is pathological (~100 min for a
-# cold 23 GB load). Stage to node-local scratch first. Measured 166 GB at
-# ~235 MB/s ~= 12 min.
-SCRATCH=${TMPDIR:-/scratch/user/$USER}
-SCRATCH_HF=$SCRATCH/huggingface_cache
-SRC_MODEL=/QRISdata/Q9468/huggingface_cache/hub/models--meta-llama--Llama-3.2-90B-Vision-Instruct
+# Weights are pre-staged on GPFS scratch by scripts/bunya_stage_90b.sh, so
+# there is no 45 min copy in this job any more. That copy was also duplicating
+# a redundant original/*.pth directory, which is why it took 44 min for what is
+# only 166 GB of safetensors.
+MODEL_DIR=/scratch/user/$USER/models/Llama-3.2-90B-Vision-Instruct
+if [ ! -f "$MODEL_DIR/model.safetensors.index.json" ]; then
+    echo "[phase1] FATAL: weights not staged at $MODEL_DIR" >&2
+    echo "[phase1] run: sbatch scripts/bunya_stage_90b.sh" >&2
+    exit 1
+fi
+echo "[phase1] weights=$MODEL_DIR"
 
-echo "[phase1] scratch=$SCRATCH_HF"
-df -h "$SCRATCH"
-echo "[phase1] staging 166 GB of weights ..."
-mkdir -p "$SCRATCH_HF/hub"
-time rsync -aL "$SRC_MODEL" "$SCRATCH_HF/hub/"
-echo "[phase1] copy done"
-
-export HF_HOME=$SCRATCH_HF
+export HF_HUB_OFFLINE=1
 export SAFETENSORS_FAST_GPU=1
 
-python -u scripts/run_phase1.py --model llama --quantization none
+python -u scripts/run_phase1.py --model llama --quantization none \
+    --weights-path "$MODEL_DIR"
 
 echo "[phase1] peak VRAM per GPU:"
 nvidia-smi --query-gpu=index,memory.used --format=csv,noheader || true

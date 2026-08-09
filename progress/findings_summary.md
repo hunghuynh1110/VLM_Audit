@@ -230,3 +230,90 @@ Gaussian noise provokes the most refusal.
 2. p_yes is not comparable across conditions without care: in the vision
    conditions it is conditioned on ~20% of the model's behaviour versus ~98% in
    text-only. Cross-condition contrasts must report captured_mass alongside.
+
+---
+
+## 11. The 90B was never broken: cross-GPU copies on Bunya deliver zeros (new)
+
+The 90B's perfectly uniform output (`p = 1/128256` for every token, job 27105703;
+`p_yes` pinned at exactly 0.5 on 247/330 rows, job 27105190) was not a 90B
+problem, not a checkpoint problem, and not a code problem. **On Bunya's PCIe GPU
+nodes a direct GPU-to-GPU copy does not move the data — the destination reads
+back as all zeros, silently.**
+
+```
+src (on cuda:0)  : [0, 1, 2, 3, 4, 5, 6, 7, ...]
+src.to("cuda:1") : [0, 0, 0, 0, 0, 0, 0, 0, ...]
+n_zero in dst    : 1048576 / 1048576
+```
+
+`torch.cuda.can_device_access_peer()` returns True for every pair, so torch takes
+the peer path and the copy is lost. No error, no warning.
+
+### Why it looked like a 90B problem
+
+Every 11B run used `--gres=gpu:l40:1` (`device_map={'': 0}`); every 90B run used
+3×H100. **Model size and multi-GPU sharding were perfectly confounded across the
+entire experiment history**, so "the same code works on the 11B" appeared to
+exonerate the code and implicate the 90B checkpoint. It did neither. Forcing the
+*11B* across 3 GPUs reproduces the failure exactly (job 27113606), on a 21 GB
+model whose weights are demonstrably fine.
+
+### Mechanism, end to end
+
+`device_map="auto"` balances a model across every visible GPU, and accelerate
+moves activations across device boundaries between layers. Each crossing
+delivered zeros. Two fingerprints in the old data follow directly:
+
+- A zero hidden state through the final RMSNorm and `lm_head` gives **exactly
+  zero logits**, hence a perfectly uniform softmax — the Phase 2 signature.
+- Where activations instead exploded, `hidden.pow(2)` overflows fp32,
+  `rsqrt(inf)` is 0, and the state is zeroed anyway; where it reached `inf`,
+  `inf * 0` gives the **NaN** rows seen in Phase 1.
+
+It also explains the otherwise impossible detail in the layer trace: NaNs
+produced on `cuda:0` were *absent* from the tensor read on `cuda:1`. Values do
+not un-corrupt themselves — they were replaced by zeros in transit.
+
+### Not a library version
+
+Identical zero-fill under torch **2.7.1+cu126, 2.8.0+cu128 and 2.11.0+cu130**
+(driver 595.58.03, CUDA 13.2), on both A100 and H100 PCIe nodes.
+`NCCL_P2P_DISABLE=1` makes no difference — it governs NCCL, not the plain
+`Tensor.to()` path accelerate uses. **This is the machine, and it should be
+reported to UQ RCC.** Host↔device copies are unaffected.
+
+### Fix
+
+`src/models/p2p_workaround.py` routes every `cuda->cuda` copy through host
+memory, which is the path that works. Only tensors crossing a device boundary
+pay the cost — activations of a few MB, not the weights. `LlamaExtractor`
+probes the node with `is_affected()` and enables it automatically whenever more
+than one GPU is visible.
+
+Validated on the 11B in a single job (27113674), all three arms on one node:
+
+| arm | logits std (P1 text / P1 image / P2 digits) | P2 captured_mass |
+|---|---|---|
+| A — single GPU (ground truth) | 2.13938 / 2.10143 / 1.66373 | 0.981027 |
+| B — sharded, no workaround | **0 / 0 / 0** | 5.45783e-05 (= uniform) |
+| C — sharded + workaround | **2.13938 / 2.10143 / 1.66373** | **0.981027** |
+
+Arm C is bit-identical to arm A. The workaround restores the reference result
+exactly rather than merely producing something non-degenerate.
+
+### What this invalidates
+
+- **Invalid:** every 90B run to date. Archived as
+  `outputs/phase{1,2}/*.invalid_multi_gpu.*` — evidence, not results.
+- **Unaffected:** all 11B results, including Findings 4c and 10. Every 11B job
+  ran on a single L40, so no cross-GPU copy ever occurred.
+- **Watch:** any future model needing more than one GPU — Qwen2-VL-72B included.
+
+### Method note
+
+`captured_mass` did not catch this one on its own: the failing runs reported
+plausible aggregates (`rating_expected` = 4.000, the exact midpoint of a 1–7
+uniform). What exposed it was that **330 distinct prompts produced only 8
+distinct values** — output carrying no information about its input. Worth
+adding to the standard checks: a degenerate run can look calibrated in the mean.
