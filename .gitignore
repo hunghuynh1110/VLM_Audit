@@ -14,3 +14,6 @@ logs/
 .claude/
 *.egg-info/
 syncFiles
+
+# Result artifacts are versioned deliberately (see results_archive/README.md)
+!results_archive/

@@ -1,0 +1,620 @@
+==============================================
+[smoke8] node=bun125  gpu=0
+NVIDIA L40S, 46068 MiB
+==============================================
+[smoke8] --- library versions ---
+torch        2.11.0+cu130
+transformers 4.57.6
+accelerate   1.0.1
+bitsandbytes 0.49.2
+cuda avail   True
+[smoke8] --- Phase 2 tokenizer check (1-7 single-token?) ---
+'yes' plain=[9891] space=[10035] single=True
+'no'  plain=[2201] space=[912] single=True
+'1'   plain=[16] space=[220, 16] single=True
+'2'   plain=[17] space=[220, 17] single=True
+'3'   plain=[18] space=[220, 18] single=True
+'4'   plain=[19] space=[220, 19] single=True
+'5'   plain=[20] space=[220, 20] single=True
+'6'   plain=[21] space=[220, 21] single=True
+'7'   plain=[22] space=[220, 22] single=True
+[smoke8] scratch=/scratch/temp/27087752/huggingface_cache
+Filesystem      Size  Used Avail Use% Mounted on
+scratch         2.2P  914T  1.3P  41% /scratch
+[smoke8] copying llama-11b weights (~20 GB) ...
+              0   0%    0.00kB/s    0:00:00 (xfr#0, to-chk=35/40)              0   0%    0.00kB/s    0:00:00 (xfr#0, to-chk=34/40)              0   0%    0.00kB/s    0:00:00 (xfr#1, to-chk=33/40)              0   0%    0.00kB/s    0:00:00 (xfr#1, to-chk=28/40)              0   0%    0.00kB/s    0:00:00 (xfr#2, to-chk=32/40)              0   0%    0.00kB/s    0:00:00 (xfr#3, to-chk=31/40)              0   0%    0.00kB/s    0:00:00 (xfr#4, to-chk=30/40)              0   0%    0.00kB/s    0:00:00 (xfr#5, to-chk=29/40)              0   0%    0.00kB/s    0:00:00 (xfr#6, to-chk=28/40)         32,768   0%    0.00kB/s    0:00:00      243,728,384   0%  232.41MB/s    0:02:58      523,010,048   1%  249.50MB/s    0:02:45      808,747,008   1%  257.17MB/s    0:02:39    1,090,387,968   2%  260.09MB/s    0:02:36    1,377,075,200   3%  270.35MB/s    0:02:29    1,658,617,856   3%  270.82MB/s    0:02:27    1,943,044,096   4%  270.57MB/s    0:02:27    2,224,848,896   5%  270.54MB/s    0:02:26    2,495,643,648   5%  266.82MB/s    0:02:27    2,760,671,232   6%  262.88MB/s    0:02:28    3,021,242,368   7%  257.13MB/s    0:02:30    3,279,716,352   7%  251.56MB/s    0:02:33    3,556,540,416   8%  253.00MB/s    0:02:31    3,837,853,696   8%  256.88MB/s    0:02:27    4,115,955,712   9%  261.13MB/s    0:02:24    4,394,975,232  10%  266.10MB/s    0:02:20    4,675,895,296  10%  267.01MB/s    0:02:19    4,915,919,704  11%  261.44MB/s    0:00:17 (xfr#7, to-chk=27/40)  4,915,920,158  11%  261.43MB/s    0:00:17 (xfr#8, to-chk=26/40)  4,915,925,247  11%  261.06MB/s    0:00:17 (xfr#9, to-chk=25/40)  4,915,958,015  11%  253.12MB/s    0:02:25    5,173,874,943  12%  248.38MB/s    0:02:27    5,448,896,767  12%  247.44MB/s    0:02:27    5,728,866,559  13%  247.28MB/s    0:02:26    6,005,166,335  14%  259.88MB/s    0:02:17    6,268,326,143  14%  261.13MB/s    0:02:16    6,539,415,807  15%  260.20MB/s    0:02:15    6,820,958,463  15%  260.57MB/s    0:02:14    7,090,442,495  16%  258.94MB/s    0:02:14    7,365,693,695  17%  261.76MB/s    0:02:11    7,640,420,607  17%  262.63MB/s    0:02:10    7,907,086,591  18%  259.08MB/s    0:02:11    8,184,631,551  19%  261.01MB/s    0:02:09    8,464,077,055  19%  262.01MB/s    0:02:07    8,744,571,135  20%  263.38MB/s    0:02:05    9,023,131,903  21%  266.22MB/s    0:02:03    9,300,316,415  21%  266.13MB/s    0:02:02    9,574,519,039  22%  264.88MB/s    0:02:02    9,849,770,239  23%  263.57MB/s    0:02:01    9,882,176,959  23%  260.65MB/s    0:00:36 (xfr#10, to-chk=24/40) 10,087,665,087  23%  253.87MB/s    0:02:05   10,364,816,831  24%  253.86MB/s    0:02:04   10,640,592,319  24%  254.24MB/s    0:02:03   10,903,031,231  25%  251.24MB/s    0:02:03   11,182,214,591  26%  261.09MB/s    0:01:57   11,348,120,087  26%  259.98MB/s    0:00:41 (xfr#11, to-chk=23/40) 11,348,152,855  26%  166.16MB/s    0:03:04   11,357,205,912  26%  245.65MB/s    0:00:44 (xfr#12, to-chk=22/40) 11,357,206,349  26%   96.73MB/s    0:05:16   11,357,206,349  26%  234.91MB/s    0:00:46 (xfr#13, to-chk=21/40) 11,357,295,795  26%  232.23MB/s    0:00:46 (xfr#14, to-chk=20/40) 11,357,300,863  26%  232.14MB/s    0:00:46 (xfr#15, to-chk=19/40) 11,433,355,391  26%   71.59MB/s    0:07:06   11,725,121,663  27%   73.28MB/s    0:06:52   11,998,799,999  28%  114.51MB/s    0:04:21   12,285,585,535  28%  221.45MB/s    0:02:14   12,572,895,359  29%  271.76MB/s    0:01:48   12,848,146,559  30%  267.82MB/s    0:01:48   13,127,559,295  30%  269.18MB/s    0:01:47   13,411,756,159  31%  268.63MB/s    0:01:46   13,696,313,471  32%  267.98MB/s    0:01:45   13,982,181,503  32%  270.58MB/s    0:01:43   14,272,112,767  33%  273.02MB/s    0:01:41   14,544,742,527  34%  270.26MB/s    0:01:41   14,824,188,031  34%  269.04MB/s    0:01:41   15,112,808,575  35%  269.70MB/s    0:01:39   15,395,793,023  36%  268.11MB/s    0:01:39   15,670,159,487  36%  268.52MB/s    0:01:38   15,949,572,223  37%  268.51MB/s    0:01:37   16,231,901,311  38%  267.01MB/s    0:01:36   16,357,124,843  38%  241.75MB/s    0:01:04 (xfr#16, to-chk=18/40) 16,357,180,625  38%  241.70MB/s    0:01:04 (xfr#17, to-chk=17/40) 16,493,266,129  38%  261.79MB/s    0:01:37   16,780,051,665  39%  264.69MB/s    0:01:35   17,070,539,985  39%  267.33MB/s    0:01:33   17,352,574,161  40%  267.32MB/s    0:01:32   17,637,590,225  41%  272.96MB/s    0:01:29   17,919,329,489  41%  271.76MB/s    0:01:29   18,200,020,177  42%  269.42MB/s    0:01:28   18,485,626,065  43%  270.34MB/s    0:01:27   18,766,349,521  43%  269.32MB/s    0:01:26   19,051,791,569  44%  270.20MB/s    0:01:25   19,336,053,969  45%  271.05MB/s    0:01:24   19,619,071,185  45%  270.37MB/s    0:01:23   19,904,480,465  46%  271.49MB/s    0:01:21   20,190,020,817  47%  271.51MB/s    0:01:20   20,476,085,457  47%  271.94MB/s    0:01:19   20,759,725,265  48%  272.16MB/s    0:01:18   21,039,367,377  49%  270.71MB/s    0:01:18   21,328,774,353  49%  271.70MB/s    0:01:16   21,349,802,971  49%  247.84MB/s    0:01:22 (xfr#18, to-chk=16/40) 21,349,803,186  49%  247.83MB/s    0:01:22 (xfr#19, to-chk=15/40) 21,349,803,226  50%  247.83MB/s    0:01:22 (xfr#20, to-chk=14/40) 21,349,808,315  50%  247.82MB/s    0:01:22 (xfr#21, to-chk=12/40) 21,349,813,383  50%  247.82MB/s    0:01:22 (xfr#22, to-chk=11/40) 21,349,813,598  50%  247.82MB/s    0:01:22 (xfr#23, to-chk=10/40) 21,928,758,622  51%  346.60MB/s    0:00:58   22,557,642,078  52%  428.98MB/s    0:00:45   23,187,377,502  54%  512.51MB/s    0:00:37   23,817,145,694  55%  593.72MB/s    0:00:31   24,446,848,350  57%  600.81MB/s    0:00:29   25,075,797,342  58%  600.83MB/s    0:00:28   25,704,058,206  60%  600.47MB/s    0:00:27   26,332,679,518  61%  600.20MB/s    0:00:26   26,342,435,944  61%  278.86MB/s    0:01:30 (xfr#24, to-chk=9/40)  26,960,571,496  63%  599.77MB/s    0:00:25   27,590,077,544  64%  599.90MB/s    0:00:24   28,220,140,648  66%  600.33MB/s    0:00:23   28,846,271,592  67%  599.74MB/s    0:00:22   29,476,138,088  69%  600.21MB/s    0:00:21   30,105,545,832  70%  600.18MB/s    0:00:20   30,734,855,272  71%  600.00MB/s    0:00:19   31,308,687,656  73%  304.74MB/s    0:01:37 (xfr#25, to-chk=8/40) 31,361,542,440  73%  600.14MB/s    0:00:18   31,985,936,680  74%  598.83MB/s    0:00:17   32,616,261,928  76%  599.05MB/s    0:00:16   33,246,062,888  77%  599.17MB/s    0:00:15   33,876,420,904  79%  600.04MB/s    0:00:14   34,506,844,456  80%  601.48MB/s    0:00:13   35,135,760,680  82%  601.15MB/s    0:00:12   35,765,692,712  83%  601.18MB/s    0:00:11   36,224,607,360  84%  326.56MB/s    0:01:45 (xfr#26, to-chk=7/40) 36,394,280,064  85%  600.75MB/s    0:00:10   37,024,015,488  86%  600.59MB/s    0:00:09   37,653,980,288  88%  600.84MB/s    0:00:08   38,282,142,848  89%  600.42MB/s    0:00:07   38,911,616,128  91%  600.63MB/s    0:00:06   39,541,187,712  92%  600.59MB/s    0:00:05   40,170,529,920  94%  600.44MB/s    0:00:04   40,800,429,184  95%  600.86MB/s    0:00:03   41,224,431,340  96%  345.69MB/s    0:01:53 (xfr#27, to-chk=6/40) 41,427,330,796  97%  600.24MB/s    0:00:02   42,057,098,988  98%  600.29MB/s    0:00:01   42,686,572,268  99%  600.32MB/s    0:00:00   42,690,374,468  99%  350.81MB/s    0:01:56 (xfr#28, to-chk=5/40) 42,690,463,914  99%  350.80MB/s    0:01:56 (xfr#29, to-chk=4/40) 42,690,464,351  99%  350.80MB/s    0:01:56 (xfr#30, to-chk=3/40) 42,690,464,805  99%  350.80MB/s    0:01:56 (xfr#31, to-chk=2/40) 42,699,550,630  99%  350.81MB/s    0:01:56 (xfr#32, to-chk=1/40) 42,699,606,412 100%  350.81MB/s    0:01:56 (xfr#33, to-chk=0/40) 42,699,606,412 100%  350.81MB/s    0:01:56 (xfr#33, to-chk=0/40) 42,699,606,412 100%  350.81MB/s    0:01:56 (xfr#33, to-chk=0/40) 42,699,606,412 100%  350.81MB/s    0:01:56 (xfr#33, to-chk=0/40) 42,699,606,412 100%  350.81MB/s    0:01:56 (xfr#33, to-chk=0/40) 42,699,606,412 100%  350.81MB/s    0:01:56 (xfr#33, to-chk=0/40)
+[smoke8] copy done
+[smoke8] --- 8-bit inference (5 prompts) ---
+[run_phase1] model=llama_dev device=auto quantization=8bit limit=5
+[run_phase1] output_dir=outputs/smoke8
+[run_phase1] torch=2.11.0+cu130 cuda_available=True gpu_count=1
+[run_phase1] gpu[0] NVIDIA L40S 44 GB
+[run_phase1] loading model ...
+[LlamaExtractor] loading processor for meta-llama/Llama-3.2-11B-Vision-Instruct ...
+loading configuration file preprocessor_config.json from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/preprocessor_config.json
+loading configuration file config.json from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/config.json
+vision_config is None, using default mllama vision config
+text_config is None, using default mllama text config
+Model config MllamaConfig {
+  "architectures": [
+    "MllamaForConditionalGeneration"
+  ],
+  "dtype": "bfloat16",
+  "image_token_index": 128256,
+  "model_type": "mllama",
+  "text_config": {
+    "cross_attention_layers": [
+      3,
+      8,
+      13,
+      18,
+      23,
+      28,
+      33,
+      38
+    ],
+    "dropout": 0,
+    "dtype": "bfloat16",
+    "eos_token_id": [
+      128001,
+      128008,
+      128009
+    ],
+    "hidden_act": "silu",
+    "hidden_size": 4096,
+    "initializer_range": 0.02,
+    "intermediate_size": 14336,
+    "max_position_embeddings": 131072,
+    "model_type": "mllama_text_model",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 40,
+    "num_key_value_heads": 8,
+    "rms_norm_eps": 1e-05,
+    "rope_scaling": {
+      "factor": 8.0,
+      "high_freq_factor": 4.0,
+      "low_freq_factor": 1.0,
+      "original_max_position_embeddings": 8192,
+      "rope_type": "llama3"
+    },
+    "rope_theta": 500000.0,
+    "use_cache": true,
+    "vocab_size": 128256
+  },
+  "transformers_version": "4.57.6",
+  "vision_config": {
+    "attention_heads": 16,
+    "dtype": "bfloat16",
+    "hidden_act": "gelu",
+    "hidden_size": 1280,
+    "image_size": 560,
+    "initializer_range": 0.02,
+    "intermediate_layers_indices": [
+      3,
+      7,
+      15,
+      23,
+      30
+    ],
+    "intermediate_size": 5120,
+    "max_num_tiles": 4,
+    "model_type": "mllama_vision_model",
+    "norm_eps": 1e-05,
+    "num_channels": 3,
+    "num_global_layers": 8,
+    "num_hidden_layers": 32,
+    "patch_size": 14,
+    "supported_aspect_ratios": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ]
+    ],
+    "vision_output_dim": 7680
+  }
+}
+
+loading configuration file preprocessor_config.json from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/preprocessor_config.json
+Image processor MllamaImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_pad": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.48145466,
+    0.4578275,
+    0.40821073
+  ],
+  "image_processor_type": "MllamaImageProcessor",
+  "image_std": [
+    0.26862954,
+    0.26130258,
+    0.27577711
+  ],
+  "max_image_tiles": 4,
+  "resample": 2,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "height": 560,
+    "width": 560
+  }
+}
+
+loading file tokenizer.json from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/tokenizer.json
+loading file tokenizer.model from cache at None
+loading file added_tokens.json from cache at None
+loading file special_tokens_map.json from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/special_tokens_map.json
+loading file tokenizer_config.json from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/tokenizer_config.json
+loading file chat_template.jinja from cache at None
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+loading configuration file processor_config.json from cache at None
+Processor MllamaProcessor:
+- image_processor: MllamaImageProcessor {
+  "do_convert_rgb": true,
+  "do_normalize": true,
+  "do_pad": true,
+  "do_rescale": true,
+  "do_resize": true,
+  "image_mean": [
+    0.48145466,
+    0.4578275,
+    0.40821073
+  ],
+  "image_processor_type": "MllamaImageProcessor",
+  "image_std": [
+    0.26862954,
+    0.26130258,
+    0.27577711
+  ],
+  "max_image_tiles": 4,
+  "resample": 2,
+  "rescale_factor": 0.00392156862745098,
+  "size": {
+    "height": 560,
+    "width": 560
+  }
+}
+
+- tokenizer: PreTrainedTokenizerFast(name_or_path='meta-llama/Llama-3.2-11B-Vision-Instruct', vocab_size=128000, model_max_length=131072, is_fast=True, padding_side='right', truncation_side='right', special_tokens={'bos_token': '<|begin_of_text|>', 'eos_token': '<|eot_id|>', 'pad_token': '<|finetune_right_pad_id|>'}, clean_up_tokenization_spaces=True, added_tokens_decoder={
+	128000: AddedToken("<|begin_of_text|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128001: AddedToken("<|end_of_text|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128002: AddedToken("<|reserved_special_token_0|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128003: AddedToken("<|reserved_special_token_1|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128004: AddedToken("<|finetune_right_pad_id|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128005: AddedToken("<|step_id|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128006: AddedToken("<|start_header_id|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128007: AddedToken("<|end_header_id|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128008: AddedToken("<|eom_id|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128009: AddedToken("<|eot_id|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128010: AddedToken("<|python_tag|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128011: AddedToken("<|reserved_special_token_2|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128012: AddedToken("<|reserved_special_token_3|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128013: AddedToken("<|reserved_special_token_4|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128014: AddedToken("<|reserved_special_token_5|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128015: AddedToken("<|reserved_special_token_6|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128016: AddedToken("<|reserved_special_token_7|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128017: AddedToken("<|reserved_special_token_8|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128018: AddedToken("<|reserved_special_token_9|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128019: AddedToken("<|reserved_special_token_10|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128020: AddedToken("<|reserved_special_token_11|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128021: AddedToken("<|reserved_special_token_12|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128022: AddedToken("<|reserved_special_token_13|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128023: AddedToken("<|reserved_special_token_14|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128024: AddedToken("<|reserved_special_token_15|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128025: AddedToken("<|reserved_special_token_16|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128026: AddedToken("<|reserved_special_token_17|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128027: AddedToken("<|reserved_special_token_18|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128028: AddedToken("<|reserved_special_token_19|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128029: AddedToken("<|reserved_special_token_20|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128030: AddedToken("<|reserved_special_token_21|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128031: AddedToken("<|reserved_special_token_22|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128032: AddedToken("<|reserved_special_token_23|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128033: AddedToken("<|reserved_special_token_24|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128034: AddedToken("<|reserved_special_token_25|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128035: AddedToken("<|reserved_special_token_26|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128036: AddedToken("<|reserved_special_token_27|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128037: AddedToken("<|reserved_special_token_28|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128038: AddedToken("<|reserved_special_token_29|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128039: AddedToken("<|reserved_special_token_30|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128040: AddedToken("<|reserved_special_token_31|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128041: AddedToken("<|reserved_special_token_32|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128042: AddedToken("<|reserved_special_token_33|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128043: AddedToken("<|reserved_special_token_34|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128044: AddedToken("<|reserved_special_token_35|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128045: AddedToken("<|reserved_special_token_36|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128046: AddedToken("<|reserved_special_token_37|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128047: AddedToken("<|reserved_special_token_38|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128048: AddedToken("<|reserved_special_token_39|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128049: AddedToken("<|reserved_special_token_40|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128050: AddedToken("<|reserved_special_token_41|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128051: AddedToken("<|reserved_special_token_42|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128052: AddedToken("<|reserved_special_token_43|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128053: AddedToken("<|reserved_special_token_44|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128054: AddedToken("<|reserved_special_token_45|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128055: AddedToken("<|reserved_special_token_46|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128056: AddedToken("<|reserved_special_token_47|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128057: AddedToken("<|reserved_special_token_48|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128058: AddedToken("<|reserved_special_token_49|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128059: AddedToken("<|reserved_special_token_50|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128060: AddedToken("<|reserved_special_token_51|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128061: AddedToken("<|reserved_special_token_52|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128062: AddedToken("<|reserved_special_token_53|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128063: AddedToken("<|reserved_special_token_54|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128064: AddedToken("<|reserved_special_token_55|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128065: AddedToken("<|reserved_special_token_56|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128066: AddedToken("<|reserved_special_token_57|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128067: AddedToken("<|reserved_special_token_58|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128068: AddedToken("<|reserved_special_token_59|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128069: AddedToken("<|reserved_special_token_60|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128070: AddedToken("<|reserved_special_token_61|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128071: AddedToken("<|reserved_special_token_62|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128072: AddedToken("<|reserved_special_token_63|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128073: AddedToken("<|reserved_special_token_64|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128074: AddedToken("<|reserved_special_token_65|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128075: AddedToken("<|reserved_special_token_66|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128076: AddedToken("<|reserved_special_token_67|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128077: AddedToken("<|reserved_special_token_68|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128078: AddedToken("<|reserved_special_token_69|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128079: AddedToken("<|reserved_special_token_70|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128080: AddedToken("<|reserved_special_token_71|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128081: AddedToken("<|reserved_special_token_72|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128082: AddedToken("<|reserved_special_token_73|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128083: AddedToken("<|reserved_special_token_74|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128084: AddedToken("<|reserved_special_token_75|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128085: AddedToken("<|reserved_special_token_76|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128086: AddedToken("<|reserved_special_token_77|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128087: AddedToken("<|reserved_special_token_78|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128088: AddedToken("<|reserved_special_token_79|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128089: AddedToken("<|reserved_special_token_80|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128090: AddedToken("<|reserved_special_token_81|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128091: AddedToken("<|reserved_special_token_82|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128092: AddedToken("<|reserved_special_token_83|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128093: AddedToken("<|reserved_special_token_84|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128094: AddedToken("<|reserved_special_token_85|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128095: AddedToken("<|reserved_special_token_86|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128096: AddedToken("<|reserved_special_token_87|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128097: AddedToken("<|reserved_special_token_88|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128098: AddedToken("<|reserved_special_token_89|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128099: AddedToken("<|reserved_special_token_90|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128100: AddedToken("<|reserved_special_token_91|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128101: AddedToken("<|reserved_special_token_92|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128102: AddedToken("<|reserved_special_token_93|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128103: AddedToken("<|reserved_special_token_94|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128104: AddedToken("<|reserved_special_token_95|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128105: AddedToken("<|reserved_special_token_96|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128106: AddedToken("<|reserved_special_token_97|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128107: AddedToken("<|reserved_special_token_98|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128108: AddedToken("<|reserved_special_token_99|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128109: AddedToken("<|reserved_special_token_100|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128110: AddedToken("<|reserved_special_token_101|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128111: AddedToken("<|reserved_special_token_102|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128112: AddedToken("<|reserved_special_token_103|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128113: AddedToken("<|reserved_special_token_104|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128114: AddedToken("<|reserved_special_token_105|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128115: AddedToken("<|reserved_special_token_106|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128116: AddedToken("<|reserved_special_token_107|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128117: AddedToken("<|reserved_special_token_108|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128118: AddedToken("<|reserved_special_token_109|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128119: AddedToken("<|reserved_special_token_110|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128120: AddedToken("<|reserved_special_token_111|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128121: AddedToken("<|reserved_special_token_112|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128122: AddedToken("<|reserved_special_token_113|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128123: AddedToken("<|reserved_special_token_114|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128124: AddedToken("<|reserved_special_token_115|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128125: AddedToken("<|reserved_special_token_116|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128126: AddedToken("<|reserved_special_token_117|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128127: AddedToken("<|reserved_special_token_118|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128128: AddedToken("<|reserved_special_token_119|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128129: AddedToken("<|reserved_special_token_120|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128130: AddedToken("<|reserved_special_token_121|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128131: AddedToken("<|reserved_special_token_122|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128132: AddedToken("<|reserved_special_token_123|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128133: AddedToken("<|reserved_special_token_124|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128134: AddedToken("<|reserved_special_token_125|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128135: AddedToken("<|reserved_special_token_126|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128136: AddedToken("<|reserved_special_token_127|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128137: AddedToken("<|reserved_special_token_128|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128138: AddedToken("<|reserved_special_token_129|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128139: AddedToken("<|reserved_special_token_130|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128140: AddedToken("<|reserved_special_token_131|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128141: AddedToken("<|reserved_special_token_132|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128142: AddedToken("<|reserved_special_token_133|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128143: AddedToken("<|reserved_special_token_134|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128144: AddedToken("<|reserved_special_token_135|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128145: AddedToken("<|reserved_special_token_136|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128146: AddedToken("<|reserved_special_token_137|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128147: AddedToken("<|reserved_special_token_138|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128148: AddedToken("<|reserved_special_token_139|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128149: AddedToken("<|reserved_special_token_140|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128150: AddedToken("<|reserved_special_token_141|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128151: AddedToken("<|reserved_special_token_142|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128152: AddedToken("<|reserved_special_token_143|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128153: AddedToken("<|reserved_special_token_144|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128154: AddedToken("<|reserved_special_token_145|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128155: AddedToken("<|reserved_special_token_146|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128156: AddedToken("<|reserved_special_token_147|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128157: AddedToken("<|reserved_special_token_148|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128158: AddedToken("<|reserved_special_token_149|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128159: AddedToken("<|reserved_special_token_150|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128160: AddedToken("<|reserved_special_token_151|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128161: AddedToken("<|reserved_special_token_152|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128162: AddedToken("<|reserved_special_token_153|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128163: AddedToken("<|reserved_special_token_154|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128164: AddedToken("<|reserved_special_token_155|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128165: AddedToken("<|reserved_special_token_156|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128166: AddedToken("<|reserved_special_token_157|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128167: AddedToken("<|reserved_special_token_158|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128168: AddedToken("<|reserved_special_token_159|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128169: AddedToken("<|reserved_special_token_160|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128170: AddedToken("<|reserved_special_token_161|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128171: AddedToken("<|reserved_special_token_162|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128172: AddedToken("<|reserved_special_token_163|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128173: AddedToken("<|reserved_special_token_164|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128174: AddedToken("<|reserved_special_token_165|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128175: AddedToken("<|reserved_special_token_166|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128176: AddedToken("<|reserved_special_token_167|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128177: AddedToken("<|reserved_special_token_168|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128178: AddedToken("<|reserved_special_token_169|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128179: AddedToken("<|reserved_special_token_170|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128180: AddedToken("<|reserved_special_token_171|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128181: AddedToken("<|reserved_special_token_172|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128182: AddedToken("<|reserved_special_token_173|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128183: AddedToken("<|reserved_special_token_174|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128184: AddedToken("<|reserved_special_token_175|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128185: AddedToken("<|reserved_special_token_176|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128186: AddedToken("<|reserved_special_token_177|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128187: AddedToken("<|reserved_special_token_178|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128188: AddedToken("<|reserved_special_token_179|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128189: AddedToken("<|reserved_special_token_180|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128190: AddedToken("<|reserved_special_token_181|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128191: AddedToken("<|reserved_special_token_182|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128192: AddedToken("<|reserved_special_token_183|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128193: AddedToken("<|reserved_special_token_184|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128194: AddedToken("<|reserved_special_token_185|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128195: AddedToken("<|reserved_special_token_186|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128196: AddedToken("<|reserved_special_token_187|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128197: AddedToken("<|reserved_special_token_188|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128198: AddedToken("<|reserved_special_token_189|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128199: AddedToken("<|reserved_special_token_190|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128200: AddedToken("<|reserved_special_token_191|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128201: AddedToken("<|reserved_special_token_192|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128202: AddedToken("<|reserved_special_token_193|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128203: AddedToken("<|reserved_special_token_194|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128204: AddedToken("<|reserved_special_token_195|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128205: AddedToken("<|reserved_special_token_196|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128206: AddedToken("<|reserved_special_token_197|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128207: AddedToken("<|reserved_special_token_198|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128208: AddedToken("<|reserved_special_token_199|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128209: AddedToken("<|reserved_special_token_200|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128210: AddedToken("<|reserved_special_token_201|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128211: AddedToken("<|reserved_special_token_202|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128212: AddedToken("<|reserved_special_token_203|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128213: AddedToken("<|reserved_special_token_204|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128214: AddedToken("<|reserved_special_token_205|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128215: AddedToken("<|reserved_special_token_206|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128216: AddedToken("<|reserved_special_token_207|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128217: AddedToken("<|reserved_special_token_208|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128218: AddedToken("<|reserved_special_token_209|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128219: AddedToken("<|reserved_special_token_210|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128220: AddedToken("<|reserved_special_token_211|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128221: AddedToken("<|reserved_special_token_212|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128222: AddedToken("<|reserved_special_token_213|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128223: AddedToken("<|reserved_special_token_214|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128224: AddedToken("<|reserved_special_token_215|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128225: AddedToken("<|reserved_special_token_216|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128226: AddedToken("<|reserved_special_token_217|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128227: AddedToken("<|reserved_special_token_218|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128228: AddedToken("<|reserved_special_token_219|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128229: AddedToken("<|reserved_special_token_220|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128230: AddedToken("<|reserved_special_token_221|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128231: AddedToken("<|reserved_special_token_222|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128232: AddedToken("<|reserved_special_token_223|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128233: AddedToken("<|reserved_special_token_224|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128234: AddedToken("<|reserved_special_token_225|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128235: AddedToken("<|reserved_special_token_226|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128236: AddedToken("<|reserved_special_token_227|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128237: AddedToken("<|reserved_special_token_228|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128238: AddedToken("<|reserved_special_token_229|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128239: AddedToken("<|reserved_special_token_230|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128240: AddedToken("<|reserved_special_token_231|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128241: AddedToken("<|reserved_special_token_232|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128242: AddedToken("<|reserved_special_token_233|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128243: AddedToken("<|reserved_special_token_234|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128244: AddedToken("<|reserved_special_token_235|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128245: AddedToken("<|reserved_special_token_236|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128246: AddedToken("<|reserved_special_token_237|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128247: AddedToken("<|reserved_special_token_238|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128248: AddedToken("<|reserved_special_token_239|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128249: AddedToken("<|reserved_special_token_240|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128250: AddedToken("<|reserved_special_token_241|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128251: AddedToken("<|reserved_special_token_242|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128252: AddedToken("<|reserved_special_token_243|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128253: AddedToken("<|reserved_special_token_244|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128254: AddedToken("<|reserved_special_token_245|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128255: AddedToken("<|reserved_special_token_246|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+	128256: AddedToken("<|image|>", rstrip=False, lstrip=False, single_word=False, normalized=False, special=True),
+}
+)
+
+{
+  "processor_class": "MllamaProcessor"
+}
+
+[LlamaExtractor] processor loaded
+[LlamaExtractor] loading weights (8bit) ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+loading configuration file config.json from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/config.json
+vision_config is None, using default mllama vision config
+text_config is None, using default mllama text config
+Model config MllamaConfig {
+  "architectures": [
+    "MllamaForConditionalGeneration"
+  ],
+  "dtype": "bfloat16",
+  "image_token_index": 128256,
+  "model_type": "mllama",
+  "text_config": {
+    "cross_attention_layers": [
+      3,
+      8,
+      13,
+      18,
+      23,
+      28,
+      33,
+      38
+    ],
+    "dropout": 0,
+    "dtype": "bfloat16",
+    "eos_token_id": [
+      128001,
+      128008,
+      128009
+    ],
+    "hidden_act": "silu",
+    "hidden_size": 4096,
+    "initializer_range": 0.02,
+    "intermediate_size": 14336,
+    "max_position_embeddings": 131072,
+    "model_type": "mllama_text_model",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 40,
+    "num_key_value_heads": 8,
+    "rms_norm_eps": 1e-05,
+    "rope_scaling": {
+      "factor": 8.0,
+      "high_freq_factor": 4.0,
+      "low_freq_factor": 1.0,
+      "original_max_position_embeddings": 8192,
+      "rope_type": "llama3"
+    },
+    "rope_theta": 500000.0,
+    "use_cache": true,
+    "vocab_size": 128256
+  },
+  "transformers_version": "4.57.6",
+  "vision_config": {
+    "attention_heads": 16,
+    "dtype": "bfloat16",
+    "hidden_act": "gelu",
+    "hidden_size": 1280,
+    "image_size": 560,
+    "initializer_range": 0.02,
+    "intermediate_layers_indices": [
+      3,
+      7,
+      15,
+      23,
+      30
+    ],
+    "intermediate_size": 5120,
+    "max_num_tiles": 4,
+    "model_type": "mllama_vision_model",
+    "norm_eps": 1e-05,
+    "num_channels": 3,
+    "num_global_layers": 8,
+    "num_hidden_layers": 32,
+    "patch_size": 14,
+    "supported_aspect_ratios": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ]
+    ],
+    "vision_output_dim": 7680
+  }
+}
+
+loading weights file model.safetensors from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/model.safetensors.index.json
+Instantiating MllamaForConditionalGeneration model under default dtype torch.bfloat16.
+Generate config GenerationConfig {}
+
+Instantiating MllamaVisionModel model under default dtype torch.bfloat16.
+Instantiating MllamaTextModel model under default dtype torch.bfloat16.
+target_dtype {target_dtype} is replaced by `torch.int8` for 8-bit BnB quantization
+loading configuration file generation_config.json from cache at /scratch/temp/27087752/huggingface_cache/hub/models--meta-llama--Llama-3.2-11B-Vision-Instruct/snapshots/9eb2daaa8597bf192a8b0e73f848f3a102794df5/generation_config.json
+Generate config GenerationConfig {
+  "bos_token_id": 128000,
+  "do_sample": true,
+  "eos_token_id": [
+    128001,
+    128008,
+    128009
+  ],
+  "pad_token_id": 128004,
+  "temperature": 0.6,
+  "top_p": 0.9
+}
+
+Could not locate the custom_generate/generate.py inside meta-llama/Llama-3.2-11B-Vision-Instruct.
+[LlamaExtractor] weights loaded, device_map={'': 0}
+[run_phase1] model loaded
+[runner] model_id     = meta-llama/Llama-3.2-11B-Vision-Instruct
+[runner] quantization = 8bit
+[runner] checkpoint   = outputs/smoke8/llama_dev_checkpoint.jsonl
+[runner] total        = 5
+[runner] completed    = 0
+[runner] pending      = 5
+phase1[llama_dev]:   0%|          | 0/5 [00:00<?, ?prompt/s]phase1[llama_dev]:  20%|██        | 1/5 [00:04<00:17,  4.31s/prompt]
+[smoke8] peak VRAM:
+0 MiB
+[smoke8] --- 8bit vs bf16 p_yes on identical prompts ---
+(comparison skipped)
+[smoke8] DONE
