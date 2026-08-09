@@ -56,6 +56,7 @@ class LlamaExtractor(BaseExtractor):
         device: str = "auto",
         quantization: Quantization = "none",
         skip_modules: Optional[list[str]] = None,
+        weights_path: Optional[str] = None,
     ) -> None:
         if variant not in _MODEL_IDS:
             raise ValueError(f"Unknown variant '{variant}'. Choose from {list(_MODEL_IDS)}")
@@ -63,7 +64,14 @@ class LlamaExtractor(BaseExtractor):
             raise ValueError(f"Unknown quantization '{quantization}'. Choose from none, 4bit, 8bit.")
 
         model_id = _MODEL_IDS[variant]
+        # model_id stays the canonical hub string: it is the provenance column
+        # and the resume key in both runners, so it must not change just
+        # because the bytes came off /scratch instead of the hub cache.
         self.model_id = model_id
+        # weights_path points at a staged local copy (scripts/bunya_stage_90b.sh).
+        # safetensors mmap() over the NFS-mounted QRISdata cache is pathological,
+        # so on Bunya we always load from GPFS scratch.
+        self.weights_source = weights_path or model_id
         self.quantization = quantization
         # Pass skip_modules=[] to deliberately quantise everything.
         self.skip_modules = (
@@ -74,8 +82,8 @@ class LlamaExtractor(BaseExtractor):
         import transformers
         transformers.logging.set_verbosity_info()
         transformers.logging.add_handler(logging.StreamHandler(sys.stdout))
-        print(f"[LlamaExtractor] loading processor for {model_id} ...")
-        self.processor = AutoProcessor.from_pretrained(model_id)
+        print(f"[LlamaExtractor] loading processor for {self.weights_source} ...")
+        self.processor = AutoProcessor.from_pretrained(self.weights_source)
         print(f"[LlamaExtractor] processor loaded")
 
         quant_kwargs: dict = {}
@@ -98,7 +106,7 @@ class LlamaExtractor(BaseExtractor):
 
         print(f"[LlamaExtractor] loading weights ({quantization}) ...")
         self.model = MllamaForConditionalGeneration.from_pretrained(
-            model_id,
+            self.weights_source,
             torch_dtype=torch.bfloat16,
             device_map=device,
             **quant_kwargs,

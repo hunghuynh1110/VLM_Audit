@@ -20,10 +20,12 @@ from src.phase1 import metrics
 from src.phase1.runner import RunConfig, default_output_dir, run_phase1
 
 
-def _build_extractor(model: str, device: str, quantization: str):
+def _build_extractor(model: str, device: str, quantization: str,
+                     weights_path: str | None = None):
     if model in ("llama", "llama_dev"):
         from src.models.llama_extractor import LlamaExtractor
-        return LlamaExtractor(variant=model, device=device, quantization=quantization)
+        return LlamaExtractor(variant=model, device=device, quantization=quantization,
+                              weights_path=weights_path)
     if model == "qwen":
         # Implemented later (Step 6 in TODO.md). Fail fast for now.
         raise NotImplementedError("Qwen extractor not implemented yet (TODO.md Step 6)")
@@ -35,6 +37,10 @@ def main() -> None:
     parser.add_argument("--model", required=True, choices=["llama", "llama_dev", "qwen"])
     parser.add_argument("--device", default="auto")
     parser.add_argument("--quantization", choices=["none", "4bit", "8bit"], default="none")
+    parser.add_argument("--weights-path", default=None,
+                        help="Load weights from a local dir (see "
+                             "scripts/bunya_stage_90b.sh) instead of the HF cache. "
+                             "model_id in the output is unaffected.")
     parser.add_argument("--limit", type=int, default=None,
                         help="Run only the first N prompts (smoke test)")
     parser.add_argument("--output-dir", type=Path, default=None,
@@ -54,7 +60,8 @@ def main() -> None:
         props = torch.cuda.get_device_properties(i)
         print(f"[run_phase1] gpu[{i}] {props.name} {props.total_memory // 1024**3} GB")
     print("[run_phase1] loading model ...")
-    extractor = _build_extractor(args.model, args.device, args.quantization)
+    extractor = _build_extractor(args.model, args.device, args.quantization,
+                                 args.weights_path)
     print("[run_phase1] model loaded")
 
     cfg = RunConfig(model_name=args.model, output_dir=output_dir, limit=args.limit)
