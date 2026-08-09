@@ -78,6 +78,19 @@ class LlamaExtractor(BaseExtractor):
             self.DEFAULT_SKIP_MODULES if skip_modules is None else skip_modules
         )
 
+        # Must happen BEFORE from_pretrained: accelerate moves tensors between
+        # devices while dispatching the model, and on Bunya a direct cuda->cuda
+        # copy silently delivers zeros. Left unpatched, any device_map spanning
+        # more than one GPU yields a hidden state of zeros and therefore an
+        # exactly uniform softmax, with no error raised. See
+        # src/models/p2p_workaround.py.
+        if torch.cuda.device_count() > 1:
+            from src.models import p2p_workaround
+            if p2p_workaround.is_affected():
+                print("[LlamaExtractor] WARNING: cross-GPU copies on this node are "
+                      "broken; staging them through host memory")
+                p2p_workaround.enable_host_staged_cross_device_copies()
+
         import logging
         import transformers
         transformers.logging.set_verbosity_info()

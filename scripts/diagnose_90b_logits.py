@@ -256,7 +256,15 @@ def main() -> None:
     ap.add_argument("--max-memory-gb", default=None,
                     help="comma list per GPU, e.g. '70,70,70' to force sharding")
     ap.add_argument("--device-map", default="auto")
+    ap.add_argument("--p2p-workaround", action="store_true",
+                    help="stage cuda->cuda copies through host memory "
+                         "(see src/models/p2p_workaround.py)")
     args = ap.parse_args()
+
+    if args.p2p_workaround:
+        from src.models import p2p_workaround
+        p2p_workaround.is_affected()
+        p2p_workaround.enable_host_staged_cross_device_copies()
 
     from transformers import MllamaForConditionalGeneration, AutoProcessor
 

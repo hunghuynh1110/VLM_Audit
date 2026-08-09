@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=64G
-#SBATCH --gres=gpu:a100:3
+#SBATCH --gres=gpu:a100:2
 #SBATCH --time=00:25:00
 #SBATCH --output=logs/torchp2pg_%j.out
 #SBATCH --error=logs/torchp2pg_%j.err
