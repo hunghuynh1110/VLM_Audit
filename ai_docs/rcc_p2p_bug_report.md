@@ -20,10 +20,11 @@ plain PyTorch with no other libraries:
 
 ```python
 import torch
-a = torch.arange(8, device="cuda:0")
+a = torch.arange(8, dtype=torch.float32, device="cuda:0")
 b = a.to("cuda:1")
-print("src:", a.tolist())   # [0, 1, 2, 3, 4, 5, 6, 7]
-print("dst:", b.tolist())   # [0, 0, 0, 0, 0, 0, 0, 0]
+torch.cuda.synchronize(0); torch.cuda.synchronize(1)
+print("src:", a.tolist())   # [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
+print("dst:", b.tolist())   # [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 ```
 
 The destination buffer reads as all zeros. This happens in every direction between
@@ -62,8 +63,10 @@ superficially plausible.
 | job | what |
 |---|---|
 | 27105190, 27105703 | 3×H100 production runs that produced corrupted output |
-| 27113604 | reproduction on a smaller model, 3×A100 |
-| 27113643, 27113672 | cross-version P2P copy tests |
+| 27113606 | reproduction on an 11B model, 3×A100 |
+| 27113633 | copy-integrity test, all devices explicitly synchronised |
+| 27113638 | value-level test showing the destination reads as zeros |
+| 27113672 | same test under three PyTorch versions |
 | 27113674 | validation that host-staged copies are correct |
 
 **Two questions**
