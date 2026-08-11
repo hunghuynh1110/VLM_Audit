@@ -40,6 +40,12 @@ import torch
 
 _PATCHED = False
 
+# Captured at import, before any patching. is_affected() must always probe the
+# raw peer path: if it went through the patched Tensor.to it would stage via the
+# host, find the data intact, and report a healthy node -- a false negative that
+# would switch the workaround off on exactly the machines that need it.
+_ORIG_TO = torch.Tensor.to
+
 
 def _target_device(args: tuple, kwargs: dict) -> Optional[torch.device]:
     """
@@ -101,8 +107,18 @@ def enable_host_staged_cross_device_copies() -> None:
         return orig_to(self, *args, **kwargs)
 
     def safe_cuda(self, device=None, *args, **kwargs):
-        dst = torch.device("cuda", device) if isinstance(device, int) else (
-            torch.device(device) if isinstance(device, str) else device)
+        if device is None:
+            # .cuda() with no argument means the CURRENT device, which need not
+            # be the one the tensor is already on. Leaving dst as None here
+            # would report "not cross-GPU" and send a genuine peer copy down the
+            # broken path.
+            dst = torch.device("cuda", torch.cuda.current_device())
+        elif isinstance(device, int):
+            dst = torch.device("cuda", device)
+        elif isinstance(device, str):
+            dst = torch.device(device)
+        else:
+            dst = device
         if _is_cross_gpu(self, dst):
             return orig_cuda(orig_to(self, "cpu"), device, *args, **kwargs)
         return orig_cuda(self, device, *args, **kwargs)
@@ -119,25 +135,42 @@ def enable_host_staged_cross_device_copies() -> None:
     print("[p2p_workaround] cuda->cuda copies are now staged through host memory")
 
 
+def _sync_all() -> None:
+    for d in range(torch.cuda.device_count()):
+        torch.cuda.synchronize(d)
+
+
 def is_affected(verbose: bool = True) -> bool:
     """
     Does a direct GPU-to-GPU copy on this machine lose the data?
 
-    Deliberately uses a known ramp rather than random values, and compares
-    against a host-staged copy of the same tensor, so a wrong answer is
-    obvious rather than merely improbable.
+    Every ordered pair is probed, not just 0->1: accelerate will move tensors
+    along whichever edges the device map happens to create, and a single healthy
+    pair is not evidence that the rest are. Any bad pair means the workaround is
+    needed, since one silently zeroed activation is enough to flatten the logits.
+
+    Uses a known ramp rather than random values, so a wrong answer is obvious
+    rather than merely improbable, and always goes through the unpatched copy.
     """
-    if torch.cuda.device_count() < 2:
+    n = torch.cuda.device_count()
+    if n < 2:
         return False
 
-    probe = torch.arange(1024, dtype=torch.float32, device="cuda:0")
-    for d in range(torch.cuda.device_count()):
-        torch.cuda.synchronize(d)
-    direct = probe.to("cuda:1")
-    for d in range(torch.cuda.device_count()):
-        torch.cuda.synchronize(d)
+    bad = []
+    for i in range(n):
+        probe = torch.arange(1024, dtype=torch.float32, device=f"cuda:{i}")
+        for j in range(n):
+            if i == j:
+                continue
+            _sync_all()
+            direct = _ORIG_TO(probe, f"cuda:{j}")
+            _sync_all()
+            if not torch.equal(_ORIG_TO(direct, "cpu"), _ORIG_TO(probe, "cpu")):
+                bad.append(f"cuda:{i}->cuda:{j}")
 
-    ok = bool(torch.equal(direct.cpu(), probe.cpu()))
     if verbose:
-        print(f"[p2p_workaround] cuda:0 -> cuda:1 copy intact: {ok}")
-    return not ok
+        if bad:
+            print(f"[p2p_workaround] BROKEN cross-GPU copies: {', '.join(bad)}")
+        else:
+            print(f"[p2p_workaround] all {n * (n - 1)} cross-GPU copy paths intact")
+    return bool(bad)

@@ -26,9 +26,12 @@
 #   the int8 kernel crash) and fits 2 GPUs at 85 GB, if a 2-GPU fallback is ever
 #   needed. `short` QOS caps at 2 GPUs, hence `gpu` QOS here.
 #
-# Walltime: the 11B ran 330 prompts in 75 s. Scaling by parameters and adding
-# the ~12 min staging copy plus load, 6 h is generous. Verified with
-# `sbatch --test-only` that walltime does not affect the start estimate.
+# Walltime: the 11B ran 330 prompts in 75 s. Staging is gone (weights are
+# pre-staged on /scratch), so this job is ~6 min of load plus inference. The
+# cross-GPU workaround stages boundary-crossing activations through host memory,
+# which adds roughly 1-2 s per prompt on a 3-way split; 6 h remains generous.
+# Verified with `sbatch --test-only` that walltime does not affect the start
+# estimate.
 
 set -euo pipefail
 

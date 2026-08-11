@@ -132,6 +132,41 @@ class LlamaExtractor(BaseExtractor):
         # Storage for the most recent cross-attention output
         self._last_attention: dict | None = None
 
+        self._assert_not_degenerate()
+
+    def _assert_not_degenerate(self) -> None:
+        """
+        One forward pass to prove the model actually computes something.
+
+        The zeroed-cross-GPU-copy fault produced constant logits and a perfectly
+        uniform softmax while raising nothing and reporting plausible aggregate
+        metrics -- two full production runs, 90 minutes of H100 time, and a long
+        investigation before anyone noticed. Constant logits are never a valid
+        state, so check for them here and fail in seconds rather than writing
+        thousands of rows of noise.
+
+        Text-only, so it costs one short forward and does not depend on images.
+        """
+        inputs = self._build_inputs("What colour is the sky?", None)
+        with torch.no_grad():
+            outputs = self.model(**inputs, return_dict=True)
+
+        logits = outputs.logits[0, -1, :].float()
+        std = logits.std().item()
+        n_nonfinite = int((~torch.isfinite(logits)).sum().item())
+        print(f"[LlamaExtractor] self-test: logits std={std:.6g} "
+              f"non-finite={n_nonfinite}")
+
+        if n_nonfinite or std < 1e-4:
+            raise RuntimeError(
+                f"Model self-test failed: next-token logits are degenerate "
+                f"(std={std:.6g}, non-finite={n_nonfinite}). A std of 0 means "
+                f"constant logits, i.e. a uniform softmax over the whole "
+                f"vocabulary, and the measurement would be meaningless. On "
+                f"Bunya the usual cause is silently zeroed cross-GPU copies -- "
+                f"see src/models/p2p_workaround.py."
+            )
+
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
