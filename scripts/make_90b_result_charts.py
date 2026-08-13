@@ -5,13 +5,12 @@ Every number is read from the run outputs -- nothing here is typed in by hand.
 
     python scripts/make_90b_result_charts.py --data-dir <dir> --out-dir <dir>
 
-Produces three figures:
-    1_validity.png   the broken vs fixed runs, showing the old output carried
-                     no information about its input
-    2_phase2.png     model vs human objectivity ratings, and scale-reversal
-                     robustness with and without an image
-    3_phase1.png     bias score by prompt structure, with the captured_mass
-                     caveat that governs how far the condition split can be read
+Produces two figures:
+    1_phase1.png   intrinsic bias: mean bias score by prompt structure, with the
+                   captured_mass caveat that governs how far the condition split
+                   can be read
+    2_phase2.png   extrinsic bias: model vs human objectivity ratings per query,
+                   and scale-reversal robustness with and without an image
 """
 
 from __future__ import annotations
@@ -48,50 +47,6 @@ def _style(ax, xgrid=False, ygrid=False):
     ax.set_axisbelow(True)
     ax.grid(axis="x" if xgrid else "y", visible=xgrid or ygrid)
     ax.tick_params(length=0)
-
-
-# ----------------------------------------------------------------- figure 1
-def figure_validity(d: Path, out: Path) -> None:
-    p1_new = pd.read_parquet(d / "llama.parquet")
-    p1_old = pd.read_parquet(d / "llama.invalid_multi_gpu.parquet")
-    p2_new = pd.read_parquet(d / "llama_historical_2018.parquet")
-    p2_old = pd.read_parquet(d / "llama_historical_2018.invalid_multi_gpu.parquet")
-
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.1))
-    fig.suptitle("The old runs produced the same answer regardless of the prompt",
-                 fontsize=13, fontweight="bold", x=0.5, y=0.99)
-
-    for ax, old, new, col, lo, hi, title, ylab, ref, reflab in [
-        (axes[0], p1_old["p_yes"], p1_new["p_yes"], "p_yes", 0, 1,
-         "Phase 1  ·  330 prompts", "p(yes)", 0.5, "0.5 = no information"),
-        (axes[1], p2_old["rating_expected"], p2_new["rating_expected"],
-         "rating_expected", 1, 7, "Phase 2  ·  360 image ratings",
-         "expected rating (1-7)", 4.0, "4.0 = scale midpoint"),
-    ]:
-        x = np.arange(len(new))
-        # The reference line is described in the legend rather than annotated on
-        # the plot: these panels are dense enough that any inline label lands on
-        # top of data.
-        ax.axhline(ref, color=BASELINE, lw=1, ls="--", zorder=1, label=reflab)
-        ax.scatter(x, old, s=7, color=RED, alpha=0.85, zorder=3,
-                   label=f"before fix ({old.nunique()} distinct)")
-        ax.scatter(x, new, s=7, color=BLUE, alpha=0.55, zorder=2,
-                   label=f"after fix ({new.nunique()} distinct)")
-        ax.set_title(title, fontsize=10, color=INK, loc="left", pad=34)
-        ax.set_xlabel("prompt (in run order)")
-        ax.set_ylabel(ylab)
-        ax.set_ylim(lo - (hi - lo) * 0.04, hi + (hi - lo) * 0.04)
-        h, l = ax.get_legend_handles_labels()
-        order = [1, 2, 0]                      # before, after, then the reference line
-        ax.legend([h[i] for i in order], [l[i] for i in order],
-                  loc="lower left", bbox_to_anchor=(0, 1.005), ncol=2,
-                  frameon=False, fontsize=7.8, handletextpad=0.4,
-                  columnspacing=1.4, labelcolor=INK2)
-        _style(ax, ygrid=True)
-
-    fig.tight_layout(rect=(0, 0.02, 1, 0.93))
-    fig.savefig(out / "1_validity.png", dpi=200)
-    plt.close(fig)
 
 
 # ----------------------------------------------------------------- figure 2
@@ -200,7 +155,7 @@ def figure_phase1(d: Path, out: Path) -> None:
     _style(ax, ygrid=True)
 
     fig.tight_layout(rect=(0, 0.02, 1, 1))
-    fig.savefig(out / "3_phase1.png", dpi=200)
+    fig.savefig(out / "1_phase1.png", dpi=200)
     plt.close(fig)
 
 
@@ -211,10 +166,9 @@ def main() -> None:
     a = ap.parse_args()
     a.out_dir.mkdir(parents=True, exist_ok=True)
 
-    figure_validity(a.data_dir, a.out_dir)
-    figure_phase2(a.data_dir, a.out_dir)
     figure_phase1(a.data_dir, a.out_dir)
-    print(f"wrote 3 figures to {a.out_dir}")
+    figure_phase2(a.data_dir, a.out_dir)
+    print(f"wrote 2 figures to {a.out_dir}")
 
 
 if __name__ == "__main__":
