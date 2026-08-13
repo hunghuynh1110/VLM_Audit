@@ -317,3 +317,36 @@ plausible aggregates (`rating_expected` = 4.000, the exact midpoint of a 1–7
 uniform). What exposed it was that **330 distinct prompts produced only 8
 distinct values** — output carrying no information about its input. Worth
 adding to the standard checks: a degenerate run can look calibrated in the mean.
+
+### Confirmed on the 90B (jobs 27113679 / 27113680, 2026-08-10)
+
+The bf16 3×H100 production runs, rerun with the workaround:
+
+| | Phase 1 captured_mass | distinct values | `p_yes` at exactly 0.5 | NaN |
+|---|---|---|---|---|
+| 90B, broken | 0.0000 | 8 / 330 | 247 | 59 |
+| **90B, fixed** | **0.5823** | **330 / 330** | **0** | **0** |
+| 11B reference | 0.4731 | 330 / 330 | 0 | 0 |
+
+| | Phase 2 captured_mass | `rating_expected` |
+|---|---|---|
+| 90B, broken | 0.0001 | 4.000 (4 distinct values, range 3.993–4.007) |
+| **90B, fixed** | **0.9978** | **4.327 (200 distinct, range 1.619–6.882)** |
+| 11B reference | 0.9944 | 2.967 (200 distinct, range 1.928–5.169) |
+
+`captured_mass` now matches the 11B's scale (~0.5 for Phase 1 yes/no, ~0.99 for
+Phase 2 digits), every row is distinct, and the by-condition pattern reproduces
+Finding 10 on the larger model — text_only 0.950, gray_patch 0.467, noise 0.329.
+The 90B refuses the yes/no frame less than the 11B but in the same direction.
+
+**Independent cross-check.** A 4-bit single-GPU run (job 27114730,
+`outputs/phase1_90b_1gpu_4bit/`) makes no cross-GPU copies at all, so the fault
+cannot apply to it by construction. Against the bf16 3-GPU run it gives Pearson
+r = 0.767, Spearman rho = 0.747, mean |Δp_yes| = 0.148 — the magnitude expected
+from 4-bit quantisation (0.107 measured on the 11B in job 27103565), not from a
+broken transport. ASI_intrinsic agrees in sign and rough size: +0.153 bf16 vs
++0.110 at 4-bit. Two execution paths, one structurally immune to the fault,
+agree; the workaround is not quietly producing plausible-but-wrong numbers.
+
+Cost of the workaround was smaller than feared: Phase 1 took 27 min and Phase 2
+18 min, against a 6 h walltime.
