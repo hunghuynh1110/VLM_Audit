@@ -27,8 +27,9 @@ def _build_extractor(model: str, device: str, quantization: str,
         return LlamaExtractor(variant=model, device=device, quantization=quantization,
                               weights_path=weights_path)
     if model == "qwen":
-        # Implemented later (Step 6 in TODO.md). Fail fast for now.
-        raise NotImplementedError("Qwen extractor not implemented yet (TODO.md Step 6)")
+        from src.models.qwen_extractor import QwenExtractor
+        return QwenExtractor(variant=model, device=device, quantization=quantization,
+                             weights_path=weights_path)
     raise ValueError(f"Unknown --model '{model}'")
 
 

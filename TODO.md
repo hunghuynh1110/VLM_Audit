@@ -76,8 +76,11 @@
 
 **File:** `src/models/qwen_extractor.py`
 
-- [ ] Same BaseExtractor interface
-- [ ] Handle Qwen2-VL AutoProcessor differences
+- [x] Same BaseExtractor interface (shared base in src/models/hf_vision_extractor.py)
+- [x] Handle Qwen2-VL AutoProcessor differences (pinned min/max_pixels so visual
+      token count is constant across conditions; verified Qwen splits " 1" into
+      [space, digit] exactly like Llama-3, so the Phase 2 trailing space holds)
+- [ ] Stage weights: sbatch scripts/bunya_stage_qwen.sh  (tape-backed, slow)
 - [ ] Re-run scripts/run_phase1.py --model qwen
 
 ## Step 7 — Validate & Analyse Phase 1
