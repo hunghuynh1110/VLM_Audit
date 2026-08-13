@@ -28,9 +28,18 @@
 #   machine it was produced on. Disagreement would mean the workaround, or the
 #   sharding, still leaks into the measurement.
 #
-# Writes to *_rerun_a100 output dirs so the H100 results are left untouched --
-# and because both runners resume from a checkpoint keyed on model_id, so
-# reusing the original directory would skip all 330/360 rows and do nothing.
+# Writes to *_rerun_$RERUN_TAG output dirs so the original results are left
+# untouched -- and because both runners resume from a checkpoint keyed on
+# model_id, so reusing the original directory would skip all 330/360 rows and
+# silently do nothing.
+#
+# Parameterised so the same script covers both the slow full replication and a
+# fast partial one, since the A100 queue is days long and debug+H100 is hours:
+#   RERUN_TAG    output suffix                       (default a100)
+#   RERUN_PHASES which phases to run, e.g. "1"       (default "1 2")
+# Override the hardware at submit time, e.g.
+#   sbatch --qos=debug --gres=gpu:h100:3 --time=01:00:00 \
+#          --export=ALL,RERUN_TAG=h100,RERUN_PHASES=1 scripts/bunya_rerun_90b.sh
 
 set -euo pipefail
 
@@ -56,15 +65,16 @@ if [ ! -f "$MODEL_DIR/model.safetensors.index.json" ]; then
 fi
 echo "[rerun90b] weights=$MODEL_DIR"
 
-echo; echo "################ Phase 1 ################"
-python -u scripts/run_phase1.py --model llama --quantization none \
-    --weights-path "$MODEL_DIR" \
-    --output-dir outputs/phase1_rerun_a100
+TAG=${RERUN_TAG:-a100}
+PHASES=${RERUN_PHASES:-"1 2"}
+echo "[rerun90b] tag=$TAG phases=$PHASES"
 
-echo; echo "################ Phase 2 ################"
-python -u scripts/run_phase2.py --model llama --quantization none \
-    --weights-path "$MODEL_DIR" \
-    --output-dir outputs/phase2_rerun_a100
+for ph in $PHASES; do
+    echo; echo "################ Phase $ph ################"
+    python -u "scripts/run_phase${ph}.py" --model llama --quantization none \
+        --weights-path "$MODEL_DIR" \
+        --output-dir "outputs/phase${ph}_rerun_${TAG}"
+done
 
 echo "[rerun90b] peak VRAM per GPU:"
 nvidia-smi --query-gpu=index,memory.used --format=csv,noheader || true
