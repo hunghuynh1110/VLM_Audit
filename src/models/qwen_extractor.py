@@ -29,7 +29,7 @@ from typing import Literal, Optional
 
 import torch
 from PIL import Image
-from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
+from transformers import Qwen2VLForConditionalGeneration, Qwen2VLProcessor
 
 from src.config import CFG
 from src.models.hf_vision_extractor import HFVisionExtractor
@@ -44,6 +44,27 @@ _MODEL_IDS = {"qwen": CFG["models"]["qwen"]}
 _PATCH = 28 * 28
 DEFAULT_MIN_PIXELS = 256 * _PATCH
 DEFAULT_MAX_PIXELS = 1280 * _PATCH
+
+
+class _ImageOnlyQwen2VLProcessor(Qwen2VLProcessor):
+    """
+    Qwen2VLProcessor without the video component.
+
+    Stock Qwen2VLProcessor lists video_processor among its attributes, so
+    from_pretrained tries to build an AutoVideoProcessor, which hard-requires
+    torchvision. torchvision is deliberately NOT installed in this venv:
+    transformers falls back to the slow image processor without it, and
+    installing it would silently flip the image path to the fast processor
+    ("this will result in minor differences in outputs") for Llama too --
+    changing preprocessing under results that are already collected.
+
+    Dropping the attribute is safe here because we never pass videos:
+    self.video_processor is only touched under `if videos is not None`.
+    ProcessorMixin zips args against attributes, so the None the parent
+    __init__ still passes positionally is simply discarded.
+    """
+
+    attributes = ["image_processor", "tokenizer"]
 
 
 class QwenExtractor(HFVisionExtractor):
@@ -96,7 +117,7 @@ class QwenExtractor(HFVisionExtractor):
         transformers.logging.add_handler(logging.StreamHandler(sys.stdout))
 
         print(f"[QwenExtractor] loading processor for {self.weights_source} ...")
-        self.processor = AutoProcessor.from_pretrained(
+        self.processor = _ImageOnlyQwen2VLProcessor.from_pretrained(
             self.weights_source, min_pixels=min_pixels, max_pixels=max_pixels
         )
         print(f"[QwenExtractor] processor loaded "
