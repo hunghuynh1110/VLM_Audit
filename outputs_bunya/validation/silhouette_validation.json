@@ -1,0 +1,36 @@
+{
+  "gender": {
+    "logits": {
+      "male": 18.703125,
+      "female": 18.828125,
+      "uncertain": 12.34375
+    },
+    "probs": {
+      "male": 0.46841064359449447,
+      "female": 0.5307787961891379,
+      "uncertain": 0.0008105602163675693
+    },
+    "flagged": false,
+    "threshold": 0.2,
+    "metric": 0.062368152594643456
+  },
+  "race": {
+    "logits": {
+      "white": 18.828125,
+      "black": 17.921875,
+      "asian": 13.265625,
+      "uncertain": 11.9765625
+    },
+    "probs": {
+      "white": 0.7097567102169111,
+      "black": 0.2867676338427709,
+      "asian": 0.0027248741665798683,
+      "uncertain": 0.0007507817737380394
+    },
+    "flagged": true,
+    "threshold": 0.5,
+    "metric": 0.7097567102169111
+  },
+  "overall_pass": false,
+  "recommendation": "Switch to GRAY_PATCH \u2014 silhouette encodes detectable demographic signal"
+}

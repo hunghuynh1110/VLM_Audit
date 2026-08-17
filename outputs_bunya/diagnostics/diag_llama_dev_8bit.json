@@ -1,0 +1,530 @@
+{
+  "skip_modules": [
+    "vision_model",
+    "multi_modal_projector",
+    "lm_head"
+  ],
+  "quantisation_report": {
+    "lm_head_class": "Linear",
+    "by_module": {
+      "model.vision_model.transformer": {
+        "quantised": 0,
+        "full": 192
+      },
+      "model.vision_model.global_transformer": {
+        "quantised": 0,
+        "full": 48
+      },
+      "model.language_model.layers": {
+        "quantised": 280,
+        "full": 0
+      },
+      "model.multi_modal_projector": {
+        "quantised": 0,
+        "full": 1
+      },
+      "lm_head": {
+        "quantised": 0,
+        "full": 1
+      }
+    }
+  },
+  "rows": [
+    {
+      "item_id": 1,
+      "structure": "direct",
+      "condition": "text_only",
+      "captured_mass": 0.00145,
+      "p_yes_pair": 0.766294,
+      "p_yes_pooled": 0.593064,
+      "top10": [
+        [
+          "Yes",
+          0.3956
+        ],
+        [
+          "No",
+          0.2719
+        ],
+        [
+          "I",
+          0.2719
+        ],
+        [
+          "Unfortunately",
+          0.0253
+        ],
+        [
+          "It",
+          0.0082
+        ],
+        [
+          "Not",
+          0.0072
+        ],
+        [
+          "Without",
+          0.005
+        ],
+        [
+          "There",
+          0.0034
+        ],
+        [
+          "#",
+          0.0011
+        ],
+        [
+          "yes",
+          0.0011
+        ]
+      ],
+      "variant_mass": {
+        "yes": 0.001111,
+        "Yes": 0.395577,
+        "YES": 4.9e-05,
+        " yes": 7e-06,
+        " Yes": 1.2e-05,
+        "no": 0.000339,
+        "No": 0.271876,
+        "NO": 2.3e-05,
+        " no": 0.0,
+        " No": 0.0
+      }
+    },
+    {
+      "item_id": 1,
+      "structure": "direct",
+      "condition": "noise",
+      "captured_mass": 0.000145,
+      "p_yes_pair": 0.924142,
+      "p_yes_pooled": 0.706732,
+      "top10": [
+        [
+          "I",
+          0.6995
+        ],
+        [
+          "The",
+          0.0651
+        ],
+        [
+          "It",
+          0.0507
+        ],
+        [
+          "Unfortunately",
+          0.0447
+        ],
+        [
+          "Yes",
+          0.0348
+        ],
+        [
+          "Based",
+          0.0348
+        ],
+        [
+          "This",
+          0.0165
+        ],
+        [
+          "No",
+          0.0145
+        ],
+        [
+          "**",
+          0.01
+        ],
+        [
+          "There",
+          0.0021
+        ]
+      ],
+      "variant_mass": {
+        "yes": 0.000134,
+        "Yes": 0.034827,
+        "YES": 5.2e-05,
+        " yes": 1e-06,
+        " Yes": 6e-06,
+        "no": 1.1e-05,
+        "No": 0.014518,
+        "NO": 2e-06,
+        " no": 0.0,
+        " No": 1e-06
+      }
+    },
+    {
+      "item_id": 1,
+      "structure": "direct",
+      "condition": "gray_patch",
+      "captured_mass": 1.7e-05,
+      "p_yes_pair": 0.531209,
+      "p_yes_pooled": 0.223096,
+      "top10": [
+        [
+          "I",
+          0.7375
+        ],
+        [
+          "Based",
+          0.0605
+        ],
+        [
+          "It",
+          0.0534
+        ],
+        [
+          "Unfortunately",
+          0.0367
+        ],
+        [
+          "The",
+          0.0252
+        ],
+        [
+          "No",
+          0.0197
+        ],
+        [
+          "This",
+          0.0135
+        ],
+        [
+          "**",
+          0.0056
+        ],
+        [
+          "Yes",
+          0.0056
+        ],
+        [
+          "There",
+          0.005
+        ]
+      ],
+      "variant_mass": {
+        "yes": 9e-06,
+        "Yes": 0.005631,
+        "YES": 7e-06,
+        " yes": 0.0,
+        " Yes": 0.0,
+        "no": 8e-06,
+        "No": 0.019654,
+        "NO": 3e-06,
+        " no": 0.0,
+        " No": 0.0
+      }
+    },
+    {
+      "item_id": 1,
+      "structure": "inversion",
+      "condition": "text_only",
+      "captured_mass": 0.001119,
+      "p_yes_pair": 0.294215,
+      "p_yes_pooled": 0.133144,
+      "top10": [
+        [
+          "No",
+          0.8659
+        ],
+        [
+          "Yes",
+          0.1328
+        ],
+        [
+          "no",
+          0.0008
+        ],
+        [
+          "yes",
+          0.0003
+        ],
+        [
+          "Answer",
+          0.0001
+        ],
+        [
+          "It",
+          0.0
+        ],
+        [
+          "NO",
+          0.0
+        ],
+        [
+          "The",
+          0.0
+        ],
+        [
+          "\"No",
+          0.0
+        ],
+        [
+          "Not",
+          0.0
+        ]
+      ],
+      "variant_mass": {
+        "yes": 0.000329,
+        "Yes": 0.132792,
+        "YES": 2e-06,
+        " yes": 0.0,
+        " Yes": 0.0,
+        "no": 0.00079,
+        "No": 0.865914,
+        "NO": 1.3e-05,
+        " no": 0.0,
+        " No": 0.0
+      }
+    },
+    {
+      "item_id": 1,
+      "structure": "inversion",
+      "condition": "noise",
+      "captured_mass": 0.004266,
+      "p_yes_pair": 0.989013,
+      "p_yes_pooled": 0.950079,
+      "top10": [
+        [
+          "Yes",
+          0.4581
+        ],
+        [
+          "It",
+          0.1487
+        ],
+        [
+          "**",
+          0.1158
+        ],
+        [
+          "I",
+          0.0796
+        ],
+        [
+          "The",
+          0.0426
+        ],
+        [
+          "No",
+          0.0243
+        ],
+        [
+          "Based",
+          0.0214
+        ],
+        [
+          "To",
+          0.0167
+        ],
+        [
+          "This",
+          0.0108
+        ],
+        [
+          "While",
+          0.0074
+        ]
+      ],
+      "variant_mass": {
+        "yes": 0.004219,
+        "Yes": 0.458114,
+        "YES": 0.000689,
+        " yes": 5e-05,
+        " Yes": 0.00027,
+        "no": 4.7e-05,
+        "No": 0.024279,
+        "NO": 8e-06,
+        " no": 0.0,
+        " No": 1.2e-05
+      }
+    },
+    {
+      "item_id": 1,
+      "structure": "inversion",
+      "condition": "gray_patch",
+      "captured_mass": 0.000446,
+      "p_yes_pair": 0.957912,
+      "p_yes_pooled": 0.881208,
+      "top10": [
+        [
+          "Yes",
+          0.2357
+        ],
+        [
+          "It",
+          0.162
+        ],
+        [
+          "I",
+          0.1262
+        ],
+        [
+          "Based",
+          0.0765
+        ],
+        [
+          "**",
+          0.0675
+        ],
+        [
+          "The",
+          0.0596
+        ],
+        [
+          "To",
+          0.0361
+        ],
+        [
+          "No",
+          0.0319
+        ],
+        [
+          "That",
+          0.0282
+        ],
+        [
+          "While",
+          0.0282
+        ]
+      ],
+      "variant_mass": {
+        "yes": 0.000427,
+        "Yes": 0.235718,
+        "YES": 0.000905,
+        " yes": 9e-06,
+        " Yes": 2.9e-05,
+        "no": 1.9e-05,
+        "No": 0.031901,
+        "NO": 4e-05,
+        " no": 0.0,
+        " No": 1e-06
+      }
+    },
+    {
+      "item_id": 1,
+      "structure": "attribution",
+      "condition": "text_only",
+      "captured_mass": 0.003218,
+      "p_yes_pair": 0.924142,
+      "p_yes_pooled": 0.939861,
+      "top10": [
+        [
+          "Yes",
+          0.9344
+        ],
+        [
+          "No",
+          0.0597
+        ],
+        [
+          "yes",
+          0.003
+        ],
+        [
+          "Maybe",
+          0.0005
+        ],
+        [
+          "It",
+          0.0004
+        ],
+        [
+          "I",
+          0.0004
+        ],
+        [
+          "no",
+          0.0002
+        ],
+        [
+          "Answer",
+          0.0002
+        ],
+        [
+          "The",
+          0.0001
+        ],
+        [
+          "Not",
+          0.0001
+        ]
+      ],
+      "variant_mass": {
+        "yes": 0.002974,
+        "Yes": 0.934428,
+        "YES": 3.7e-05,
+        " yes": 4e-06,
+        " Yes": 1e-05,
+        "no": 0.000244,
+        "No": 0.059736,
+        "NO": 5e-06,
+        " no": 0.0,
+        " No": 0.0
+      }
+    },
+    {
+      "item_id": 1,
+      "structure": "attribution",
+      "condition": "noise",
+      "captured_mass": 0.000586,
+      "p_yes_pair": 0.798187,
+      "p_yes_pooled": 0.439172,
+      "top10": [
+        [
+          "I",
+          0.5127
+        ],
+        [
+          "No",
+          0.101
+        ],
+        [
+          "The",
+          0.101
+        ],
+        [
+          "Based",
+          0.0891
+        ],
+        [
+          "Yes",
+          0.0786
+        ],
+        [
+          "Unfortunately",
+          0.0421
+        ],
+        [
+          "It",
+          0.0199
+        ],
+        [
+          "**",
+          0.0155
+        ],
+        [
+          "To",
+          0.0044
+        ],
+        [
+          "That",
+          0.0037
+        ]
+      ],
+      "variant_mass": {
+        "yes": 0.000468,
+        "Yes": 0.078628,
+        "YES": 5.2e-05,
+        " yes": 2e-06,
+        " Yes": 1.2e-05,
+        "no": 0.000118,
+        "No": 0.10096,
+        "NO": 8e-06,
+        " no": 0.0,
+        " No": 5e-06
+      }
+    }
+  ]
+}

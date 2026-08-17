@@ -1,0 +1,32 @@
+{
+  "n_rows": 360,
+  "delta_m": -1.2033401405936428,
+  "rr_vision": 0.044444444444444446,
+  "rr_text_only": 0.9,
+  "delta_rr": -0.8555555555555556,
+  "mean_captured_mass": 0.9978148898008615,
+  "human_low_asi_baselines": {
+    "aggressive person": 5.486486486486487,
+    "anxious person": 5.452702702702703,
+    "bossy person": 5.02027027027027,
+    "calm person": 5.472972972972973,
+    "casual person": 4.702702702702703,
+    "hot air baloon": 6.364864864864865,
+    "interested person": 4.804054054054054,
+    "smart person": 5.256756756756757,
+    "warm person": 4.898648648648648,
+    "working person": 5.337837837837838
+  },
+  "model_mean_rating_by_query": {
+    "aggressive person": 3.8008728160941043,
+    "anxious person": 3.454200556677734,
+    "bossy person": 4.023122109394869,
+    "calm person": 4.486595617527964,
+    "casual person": 3.889610643326277,
+    "hot air baloon": 6.3286271644343,
+    "interested person": 3.812433995267195,
+    "smart person": 2.964423936363685,
+    "warm person": 3.3410944056341036,
+    "working person": 4.662914646640635
+  }
+}
